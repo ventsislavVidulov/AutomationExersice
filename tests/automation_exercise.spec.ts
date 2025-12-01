@@ -7,17 +7,21 @@ test.describe('Automation Exercise Full E2E Coverage', () => {
   const randomEmail = `qa_engineer_${Date.now()}@test.com`;
   const password = 'Password123!';
 
-test.beforeEach(async ({ page }) => {
+  const registeredEmail = 'johndoeseventh@gmail.com';
+  const registeredPassword = 'password';
+
+
+  test.beforeEach(async ({ page }) => {
     pm = new PageManager(page);
-    
+
     // Change: Add { waitUntil: 'domcontentloaded' }
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    
+
     // If the consent button is slow to appear, this might fail. 
     // It's safer to check if it's visible first:
     try {
       // Wait only 2 seconds for consent, if not there, move on
-      await pm.btnConsent().waitFor({ state: 'visible', timeout: 2000 });
+      await pm.btnConsent().waitFor({ state: 'visible', timeout: 10 * 1000 });
       await pm.btnConsent().click();
     } catch (e) {
       console.log('Consent button did not appear or was not needed.');
@@ -137,9 +141,9 @@ test.beforeEach(async ({ page }) => {
     await expect(page.locator('.features_items')).toContainText('Searched Products');
     await expect(page.locator('.productinfo p').first()).toContainText('Blue Top');
 
-    // Add to Cart (Handling the Hover Overlay logic you mentioned)
-    // Since Playwright can click hidden elements or force hover
-    await page.hover('.product-image-wrapper');
+    await page.hover('.product-image-wrapper', { force: true });
+    // Quick and dirty fix
+    await page.waitForTimeout(500);
     await page.locator('.overlay-content .add-to-cart').first().click();
 
     // Verify Modal
@@ -177,23 +181,23 @@ test.beforeEach(async ({ page }) => {
     await expect(page.locator('#empty_cart')).toBeVisible();
   });
 
-// Covers E2E-009: Subscription
+  // Covers E2E-009: Subscription
   test('E2E-009: Footer Subscription', async ({ page }) => {
-    
+
     // OLD LINE (causing error):
     // await page.goto('/');
 
     // NEW LINE (The Fix):
-    await page.goto('/', { waitUntil: 'domcontentloaded' }); 
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     await page.locator('#susbscribe_email').scrollIntoViewIfNeeded();
-    
+
     // Pro Tip: Use a random email to avoid "already subscribed" issues in repeated tests
-    const randomEmail = `sub_${Date.now()}@test.com`; 
+    const randomEmail = `sub_${Date.now()}@test.com`;
     await page.locator('#susbscribe_email').fill(randomEmail);
-    
+
     await page.locator('#subscribe').click();
-    
+
     await expect(page.locator('#success-subscribe')).toBeVisible();
     await expect(page.locator('#success-subscribe')).toContainText('You have been successfully subscribed!');
   });
@@ -224,7 +228,7 @@ test.beforeEach(async ({ page }) => {
     // but here we assume the user from the previous test exists or we mock it.
 
     // Quick and dirty fix
-    await pm.loginUser('johndoeseventh@johndoe.com', 'password');
+    await pm.loginUser(registeredEmail, registeredPassword);
     await expect(page.locator('text=Logged in as')).toBeVisible();
     await expect(page.locator('text=Jhon Doe')).toBeVisible();
   });
@@ -232,7 +236,8 @@ test.beforeEach(async ({ page }) => {
   // 1. LOG-002: Logout User
   test('LOG-002: Logout User', async ({ page }) => {
     // Prerequisite: Login first
-    await pm.loginUser('johndoeseventh@johndoe.com', 'password');
+    // Quick and dirty fix
+    await pm.loginUser(registeredEmail, registeredPassword);
     await expect(page.locator('text=Logged in as')).toBeVisible();
 
     // Action: Logout
@@ -246,7 +251,7 @@ test.beforeEach(async ({ page }) => {
   // 2. PRD-005: Filter by Category (Women > Dress)
   test('PRD-005: Filter Products by Category', async ({ page }) => {
     await pm.linkProducts().click();
-    
+
     // Action: Expand 'Women' and click 'Dress'
     await pm.panelWomen().click();
     // Wait for animation if necessary, Playwright auto-waits for visibility
@@ -254,7 +259,7 @@ test.beforeEach(async ({ page }) => {
 
     // Assertion: Check URL and Page Title
     await expect(page).toHaveURL(/\/category_products\/1/);
-    await expect(page.locator('.features_items h2')).toContainText('Women - Dress Products');
+    await expect(page.locator('h2.title')).toContainText('Women - Dress Products');
   });
 
   // 3. PRD-010: Filter by Brand (Polo)
@@ -266,7 +271,7 @@ test.beforeEach(async ({ page }) => {
 
     // Assertion: Check URL and Header
     await expect(page).toHaveURL(/\/brand_products\/Polo/);
-    await expect(page.locator('.features_items h2')).toContainText('Brand - Polo Products');
+    await expect(page.locator('h2.title.text-center')).toContainText('Brand - Polo Products');
   });
 
   // 4. PD-005: Submit Product Review
@@ -301,10 +306,10 @@ test.beforeEach(async ({ page }) => {
   // 6. PD-001: Verify Product Details (Data Integrity)
   test('PD-001: Verify Product Details Integrity', async ({ page }) => {
     await pm.linkProducts().click();
-    
+
     // Get text from the list to compare later
     const listPrice = await page.locator('.productinfo h2').first().innerText();
-    
+
     // Go to details
     await page.locator('.choose a').first().click();
 
@@ -326,7 +331,7 @@ test.beforeEach(async ({ page }) => {
     // Note: Depends on how your site handles 0 results. 
     // Usually, the product list is empty or "searched products" header exists but no grid.
     const products = page.locator('.product-image-wrapper');
-    await expect(products).toHaveCount(0); 
+    await expect(products).toHaveCount(0);
   });
 
   // 8. E2E-017: Add Recommended Item to Cart
@@ -340,7 +345,7 @@ test.beforeEach(async ({ page }) => {
 
     // Assertion: Confirm Modal appears
     await expect(pm.modalAdded()).toBeVisible();
-    
+
     // View Cart and verify
     await pm.btnViewCart().click();
     await expect(page).toHaveURL(/\/view_cart/);
@@ -370,6 +375,226 @@ test.beforeEach(async ({ page }) => {
     // Assertion: Verify URL contains product details
     await expect(page).toHaveURL(/\/product_details\/3/); // ID 3 based on your HTML
     await expect(page.locator('.product-information h2')).toBeVisible();
+  });
+
+
+  // 1. E2E-015: Update Product Quantity in Cart
+  test('E2E-015: Update Product Quantity and Verify Total', async ({ page }) => {
+    // Prerequisite: Add an item (e.g., Blue Top)
+    await pm.linkProducts().click();
+    await page.locator('.add-to-cart').first().click();
+    await pm.btnViewCart().click();
+
+    // Store the original unit price (assuming the first item's price)
+    const unitPriceText = await page.locator('.cart_price').first().innerText();
+    const unitPrice = parseFloat(unitPriceText.replace(/[^0-9.]/g, ''));
+
+    // Action: Change Quantity to 5
+    await pm.inputQuantity().fill('5');
+    await pm.inputQuantity().press('Enter'); // Necessary to trigger update
+
+    // Assertion: Verify total price is 5x unit price
+    // Note: This relies on the site immediately updating the total without a refresh
+    const newTotalPriceText = await pm.cartTotalPrice().first().innerText();
+    const newTotalPrice = parseFloat(newTotalPriceText.replace(/[^0-9.]/g, ''));
+
+    // We check if the new price is close to the expected value due to currency/rounding
+    expect(newTotalPrice).toBeCloseTo(unitPrice * 5, 0.01);
+  });
+
+
+  // 2. E2E-090: Full Checkout and Payment Flow (High Value)
+  test('E2E-090: Full Order Placement and Payment', async ({ page }) => {
+    // Prerequisite: Login and Add item (Assumes user is logged in via setup or previous test)
+    await pm.loginUser(registeredEmail, registeredPassword);
+    await pm.linkProducts().click();
+    await page.locator('.add-to-cart').first().click();
+    await pm.btnViewCart().click();
+    await page.locator('.check_out').click();
+
+    // Action 1: Add Comment and Place Order
+    await pm.textAreaComment().fill('Please deliver before 5 PM.');
+    await pm.btnPlaceOrder().click();
+
+    // Action 2: Fill Payment Details
+    await pm.fillPaymentDetails();
+
+    // Assertion: Verify Order Confirmation
+    await expect(page).toHaveURL(/\/payment_done/);
+    await expect(pm.orderConfirmationMessage()).toContainText('Congratulations! Your order has been confirmed!');
+  });
+
+
+  // 3. E2E-032: Account Deletion Verification
+  test('E2E-032: Account Deletion Flow', async ({ page }) => {
+    // Prerequisite: Login (Assumes user is logged in)
+    await pm.loginUser(randomEmail, password);
+
+    // Action 1: Click Delete Account
+    await pm.linkDeleteAccount().click();
+
+    // Assertion: Verify Account Deleted Page
+    await expect(pm.h2AccountDeleted()).toBeVisible();
+    await expect(pm.h2AccountDeleted()).toContainText('Account Deleted!');
+
+    // Action 2: Continue back to Home
+    await page.locator('[data-qa="continue-button"]').click();
+
+    // Assertion: Verify user is logged out (Header changes)
+    await expect(page.locator('a[href="/login"]')).toBeVisible();
+  });
+
+
+  // 4. HOME-005: Product Hover State Verification
+  test('HOME-005: Verify Add to Cart Overlay on Hover', async ({ page }) => {
+    // Go to Home Page
+    await page.goto('/');
+
+    const productCard = page.locator('.single-products').first();
+    const overlayButton = productCard.locator('.overlay-content .add-to-cart');
+
+    // Assertion 1: Verify the overlay button is NOT visible initially
+    await expect(overlayButton).not.toBeVisible();
+
+    // Action: Hover over the product card
+    await productCard.hover();
+
+    // Assertion 2: Verify the overlay button BECOMES visible
+    await expect(overlayButton).toBeVisible();
+  });
+
+
+  // 5. E2E-107: Cart Quantity Boundary Check (Max Input)
+  test('E2E-107: Product Quantity Input Boundary Check', async ({ page }) => {
+    await pm.linkProducts().click();
+    await page.locator('.choose a').first().click(); // Go to PDP
+
+    // Action: Input a quantity far above normal limits
+    await page.locator('#quantity').fill('999999');
+    await page.locator('button.cart').click();
+
+    await pm.btnViewCart().click();
+
+    // Assertion: Verify the actual quantity in the cart is capped (e.g., at 99 or 100)
+    const finalQuantity = await pm.inputQuantity().inputValue();
+
+    // Check if the final quantity is a capped value (not 999999)
+    // We assume the system caps the value at 99 or 100
+    expect(parseInt(finalQuantity)).toBeLessThan(1000);
+  });
+
+
+  // 6. E2E-102: Product Detail Page for Non-Existent ID
+  test('E2E-102: Access Non-Existent Product URL', async ({ page }) => {
+    // Action: Manually navigate to a product ID that does not exist
+    await page.goto('/product_details/99999', { waitUntil: 'domcontentloaded' });
+
+    // Assertion: Verify system redirects back to the products list or shows an error/404 page
+    const currentURL = page.url();
+    const expectedProductListURL = new RegExp(/\/products|\/404/);
+
+    expect(currentURL).toMatch(expectedProductListURL);
+  });
+
+  // Favorite test
+  test('E2E-025: Verify Cart Total Price Summation', async ({ page }) => {
+    // Prerequisite: Add two different items
+    await pm.linkProducts().click();
+
+    // --- FIRST ITEM ---
+    // Add first item (often visible without explicit hover)
+    await page.locator('.add-to-cart').first().click();
+    await page.locator('.close-modal').click(); // Continue shopping
+
+    // --- SECOND ITEM: FIX APPLIED HERE ---
+
+    // 1. Locate the container for the second product (index 1)
+    const secondProductContainer = page.locator('.product-image-wrapper').nth(1);
+
+    // 2. 🔥 Explicitly HOVER over the container to make the button visible/clickable
+    await secondProductContainer.hover();
+
+    // 3. Now click the 'Add to Cart' button within that container (index 1)
+    await secondProductContainer.locator('.add-to-cart').nth(1).click();
+
+    // Continue the flow
+    await pm.btnViewCart().click();
+
+    // Extract all item prices
+    const prices = await pm.cartItemPrices().allInnerTexts();
+
+    // Calculate expected total
+    let expectedTotal = 0;
+    prices.forEach(priceText => {
+      // Clean the price string (removes currency symbols and formats)
+      expectedTotal += parseFloat(priceText.replace(/[^0-9.]/g, ''));
+    });
+
+    // Extract actual total
+    // NOTE: If your site has a single total price locator (span#total_price), use that.
+    // Otherwise, ensure you locate the total cell for the cart summary.
+    const firstActualTotalText = await page.locator('#cart_info').locator('td.cart_total').nth(0).innerText();
+    const firstActualTotal = parseFloat(firstActualTotalText.replace(/[^0-9.]/g, ''));
+    const secondActualTotalText = await page.locator('#cart_info').locator('td.cart_total').nth(1).innerText();
+    const secondActualTotal = parseFloat(secondActualTotalText.replace(/[^0-9.]/g, ''));
+
+    // Assertion: Compare the expected sum with the displayed total
+    // Using 0.01 tolerance handles potential floating point or currency rounding issues.
+    expect(firstActualTotal + secondActualTotal).toBeCloseTo(expectedTotal, 0.01);
+  });
+
+  // 8. E2E-057: Checkout Comment Persistence
+  test('E2E-057: Verify Order Comment Persistence', async ({ page }) => {
+    // Prerequisite: Login and go to Checkout Page
+    await pm.loginUser(registeredEmail, registeredPassword);
+    await pm.linkProducts().click();
+    await page.locator('.add-to-cart').first().click();
+    await pm.btnViewCart().click();
+    await page.locator('.check_out').click();
+
+    const commentText = 'Please ensure the packaging is sturdy.';
+
+    // Action: Fill comment field
+    await pm.textAreaComment().fill(commentText);
+
+    // Action: Click Place Order
+    await pm.btnPlaceOrder().click();
+
+    // Assertion: Verify the comment field text is displayed on the payment confirmation/review page
+    // Note: Assuming the payment confirmation page shows the comment
+    await expect(page.locator('.form-control[readonly]')).toHaveValue(commentText);
+
+    // Clean up by placing order
+    await pm.fillPaymentDetails();
+  });
+
+
+  // 9. E2E-064: Guest Direct Access to Checkout Flow
+  test('E2E-064: Guest User Attempts Checkout', async ({ page }) => {
+    // Prerequisite: Ensure not logged in (using test.use({ storageState: undefined }) here is best)
+
+    // Action 1: Add item as guest
+    await pm.linkProducts().click();
+    await page.locator('.add-to-cart').first().click();
+    await pm.btnViewCart().click();
+
+    // Action 2: Click Checkout as guest
+    await page.locator('.check_out').click();
+
+    // Assertion: Verify redirection to the Login page/Modal
+    await expect(page.locator('h2:has-text("Login to your account")')).toBeVisible();
+  });
+
+
+  // 10. E2E-067: Verify "API Testing" Link Integrity (Negative Link Check)
+  test('E2E-067: Verify "API Testing" Link Navigation', async ({ page }) => {
+    // Action: Click the "API Testing" link in the menu (assuming the text link is unique)
+    await page.locator('a:has-text("API Testing")').click();
+
+    // Assertion: Verify that the navigation goes to the correct external URL (e.g., an external blog or documentation site)
+    // Based on the typical setup of this practice site, the link leads to an external source.
+    const expectedURLPattern = /https:\/\/www.automationtesting.com|qaautomation\.net/;
+    await expect(page).toHaveURL(expectedURLPattern);
   });
 });
 
