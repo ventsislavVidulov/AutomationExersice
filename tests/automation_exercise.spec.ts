@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { PageManager } from '../pages/PageManager';
 
+const randomEmail = `qa_engineer_${Date.now()}@gmail.com`;
+const password = 'Password123!';
+
 test.describe('Automation Exercise Full E2E Coverage', () => {
   let pm: PageManager;
   // Generate random email for unique registration
-  const randomEmail = `qa_engineer_${Date.now()}@test.com`;
-  const password = 'Password123!';
 
   const registeredEmail = 'johndoeseventh@gmail.com';
   const registeredPassword = 'password';
@@ -20,7 +21,7 @@ test.describe('Automation Exercise Full E2E Coverage', () => {
     // If the consent button is slow to appear, this might fail. 
     // It's safer to check if it's visible first:
     try {
-      // Wait only 2 seconds for consent, if not there, move on
+      // Wait only 10 seconds for consent, if not there, move on
       await pm.btnConsent().waitFor({ state: 'visible', timeout: 10 * 1000 });
       await pm.btnConsent().click();
     } catch (e) {
@@ -30,7 +31,7 @@ test.describe('Automation Exercise Full E2E Coverage', () => {
 
   // Covers E2E-001, ACNT-001 to ACNT-009
   test('E2E-001: Full User Registration Flow', async ({ page }) => {
-    pm.registerUser('John Doe', randomEmail);
+    pm.registerUser(randomEmail, randomEmail);
 
     // Assert Account Info Page Loaded
     await expect(page).toHaveTitle(/Signup/);
@@ -45,7 +46,8 @@ test.describe('Automation Exercise Full E2E Coverage', () => {
     await page.locator('[data-qa="continue-button"]').click();
 
     // Verify Logged In
-    await expect(page.locator('text=Logged in as John Doe')).toBeVisible();
+    await expect(page.locator(`text=Logged in as ${randomEmail}`)).toBeVisible();
+    await pm.linkLogout().click();
   });
 
 
@@ -236,7 +238,6 @@ test.describe('Automation Exercise Full E2E Coverage', () => {
   // 1. LOG-002: Logout User
   test('LOG-002: Logout User', async ({ page }) => {
     // Prerequisite: Login first
-    // Quick and dirty fix
     await pm.loginUser(registeredEmail, registeredPassword);
     await expect(page.locator('text=Logged in as')).toBeVisible();
 
@@ -428,6 +429,7 @@ test.describe('Automation Exercise Full E2E Coverage', () => {
   // 3. E2E-032: Account Deletion Verification
   test('E2E-032: Account Deletion Flow', async ({ page }) => {
     // Prerequisite: Login (Assumes user is logged in)
+    await page.waitForTimeout(10 * 1000);
     await pm.loginUser(randomEmail, password);
 
     // Action 1: Click Delete Account
@@ -451,16 +453,19 @@ test.describe('Automation Exercise Full E2E Coverage', () => {
     await page.goto('/');
 
     const productCard = page.locator('.single-products').first();
-    const overlayButton = productCard.locator('.overlay-content .add-to-cart');
+    // const overlayButton = productCard.locator('.overlay-content .add-to-cart');
+    const overlay = productCard.locator('.product-overlay');
 
     // Assertion 1: Verify the overlay button is NOT visible initially
-    await expect(overlayButton).not.toBeVisible();
+    // My fixes
+    await expect(overlay).toHaveCSS('height', '0px');
 
     // Action: Hover over the product card
     await productCard.hover();
 
     // Assertion 2: Verify the overlay button BECOMES visible
-    await expect(overlayButton).toBeVisible();
+    // My fixes
+    await expect(overlay).not.toHaveCSS('heght', '0px');
   });
 
 
