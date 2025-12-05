@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { PageManager } from '../pages/PageManager';
+import { PageManager } from './pages/PageManager';
 import * as fs from 'fs';
 import * as path from 'path';
 

@@ -112,9 +112,43 @@ export class PageManager {
   readonly orderConfirmationMessage = () => this.page.locator('.col-sm-9 p').first();
 
   // Cart Data Locators
+  readonly btnQuantity = (itemIndex = 0) => this.page.locator('button.disabled').nth(itemIndex);
   readonly inputQuantity = (itemIndex = 0) => this.page.locator('input.cart_quantity_input').nth(itemIndex);
-  readonly cartTotalPrice = () => this.page.locator('#cart_info_table .cart_total_price');
-  readonly cartItemPrices = () => this.page.locator('#cart_info_table .cart_price');
+  readonly cartTotalPrice = (itemIndex = 0) => this.page.locator('#cart_info_table .cart_total_price').nth(itemIndex);
+  readonly cartItemPrices = (itemIndex = 0) => this.page.locator('#cart_info_table .cart_price').nth(itemIndex);
+
+  // Add these inside your PageManager class in pages/PageManager.ts
+
+  // --- NEW LOCATORS FOR COMPLEX FLOWS ---
+
+  // Dynamic Category & Subcategory Selection
+  // Example usage: await pm.linkCategory('Men').click();
+  readonly linkCategory = (category: string) => this.page.locator(`.panel-title a[href="#${category}"]`);
+  readonly linkSubCategory = (categoryId: number) => this.page.locator(`a[href="/category_products/${categoryId}"]`);
+
+  // Checkout Address Verification Locators
+  readonly checkoutDeliveryAddress = () => this.page.locator('#address_delivery');
+  readonly checkoutBillingAddress = () => this.page.locator('#address_invoice');
+
+  // Review Form
+  readonly reviewForm = () => this.page.locator('#review-form');
+
+  // --- NEW HELPER METHODS ---
+
+  /**
+   * Helper to parse price string "$ 500" or "Rs. 500" to number 500
+   */
+  async getPriceValue(locator: Locator): Promise<number> {
+    const text = await locator.innerText();
+    return parseFloat(text.replace(/[^0-9.]|(?<!\d)\./g, ''));
+  }
+
+  /**
+   * Helper to verify address text exists in the checkout address box
+   */
+  async verifyAddressDetails(container: Locator, addressLine: string) {
+    await expect(container).toContainText(addressLine);
+  }
 
 
   /**
