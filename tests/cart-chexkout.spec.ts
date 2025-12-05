@@ -115,6 +115,7 @@ test.describe('Cart & Checkout Tests', () => {
     await pm.btnViewCart().click();
 
     const prices = await pm.cartItemPrices().allInnerTexts();
+    
     let expectedTotal = 0;
     prices.forEach(priceText => {
       expectedTotal += parseFloat(priceText.replace(/[^0-9.]|(?<!\d)\./g, ''));

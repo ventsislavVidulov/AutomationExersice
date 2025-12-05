@@ -114,8 +114,8 @@ export class PageManager {
   // Cart Data Locators
   readonly btnQuantity = (itemIndex = 0) => this.page.locator('button.disabled').nth(itemIndex);
   readonly inputQuantity = (itemIndex = 0) => this.page.locator('input.cart_quantity_input').nth(itemIndex);
-  readonly cartTotalPrice = (itemIndex = 0) => this.page.locator('#cart_info_table .cart_total_price').nth(itemIndex);
-  readonly cartItemPrices = (itemIndex = 0) => this.page.locator('#cart_info_table .cart_price').nth(itemIndex);
+  readonly cartTotalPrice = () => this.page.locator('#cart_info_table .cart_total_price');
+  readonly cartItemPrices = () => this.page.locator('#cart_info_table .cart_price');
 
   // Add these inside your PageManager class in pages/PageManager.ts
 

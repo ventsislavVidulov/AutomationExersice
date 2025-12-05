@@ -27,6 +27,7 @@ test('Global Cleanup: Delete Account', async ({ page }) => {
   
   // 2. Login
   await page.goto('/login');
+  await page.waitForTimeout(2000); // Wait for state to settle
   await pm.loginUser(sharedState.randomEmail, sharedState.password);
   
   // 3. Delete Account
