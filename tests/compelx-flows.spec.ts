@@ -24,6 +24,7 @@ test.beforeAll(async () => {
 test.beforeEach(async ({ page }) => {
     pm = new PageManager(page);
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await pm.acceptNextDialog();
     try {
         await pm.btnConsent().waitFor({ state: 'visible', timeout: 5000 });
         await pm.btnConsent().click();
@@ -131,7 +132,9 @@ test.describe('Complex E2E Integration Scenarios', () => {
 
         // Verify it's back with correct default quantity
         await expect(page.locator('#cart_info_table tbody tr')).toHaveCount(1);
-        await expect(pm.inputQuantity()).toHaveValue('1');
+        console.log(await pm.btnQuantity().innerText());
+        
+        expect(await pm.btnQuantity().innerText()).toBe('1');
     });
 
     // 5. E2E-045: Quantity Logic via Product Detail Page

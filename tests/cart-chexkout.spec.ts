@@ -114,6 +114,8 @@ test.describe('Cart & Checkout Tests', () => {
 
     await pm.btnViewCart().click();
 
+    await page.waitForTimeout(500);
+
     const prices = await pm.cartItemPrices().allInnerTexts();
     
     let expectedTotal = 0;

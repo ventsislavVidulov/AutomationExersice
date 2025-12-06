@@ -16,7 +16,7 @@ export class PageManager {
 
   // Navigation
   readonly linkLogin = () => this.page.locator('a[href="/login"]');
-  readonly linkProducts = () => this.page.locator('a[href="/products"]');
+  readonly linkProducts = () => this.page.locator('li a[href="/products"]');
   readonly linkCartNavigation = () => this.page.locator('header a[href="/view_cart"]');
   readonly linkContact = () => this.page.locator('a[href="/contact_us"]');
   readonly linkLogout = () => this.page.locator('a[href="/logout"]');
@@ -157,6 +157,12 @@ export class PageManager {
    */
   async acceptNextDialog(): Promise<void> {
     this.page.once('dialog', dialog => dialog.accept());
+  }
+
+  // Listener for advert
+  async handleAdvert(): Promise<void> {
+    console.log('Handle advert called');
+    this.page.once('popup', closeBtn => closeBtn.click('defs + path'))
   }
 
   // --- HELPER METHODS ---
