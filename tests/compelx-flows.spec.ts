@@ -133,7 +133,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
         // Verify it's back with correct default quantity
         await expect(page.locator('#cart_info_table tbody tr')).toHaveCount(1);
         console.log(await pm.btnQuantity().innerText());
-        
+
         expect(await pm.btnQuantity().innerText()).toBe('1');
     });
 
@@ -163,15 +163,21 @@ test.describe('Complex E2E Integration Scenarios', () => {
     test('E2E-066: Contact Us Form State Reset', async ({ page }) => {
         await pm.linkContact().click();
 
-        // Fill and Submit
+        // Fill and Submit - Playwright's auto-waiting makes timeout unnecessary.
+        // We can wait for a specific element to be visible to ensure the page is ready.
+        await page.waitForTimeout(500);
+        // await pm.acceptNextDialog();
+        await expect(pm.inputContactName()).toBeVisible();
         await pm.inputContactName().fill('Reset Test');
         await pm.inputContactEmail().fill('reset@test.com');
         await pm.inputContactSubject().fill('Subject');
         await pm.inputContactMessage().fill('Msg');
-        await pm.acceptNextDialog();
         await pm.btnSubmitContact().click();
+        await page.waitForSelector('.alert-success');
 
-        await expect(page.locator('.alert-success')).toBeVisible();
+        await expect(page.locator('.alert-success').first()).toHaveText(
+            'Success! Your details have been submitted successfully.'
+        );
 
         // Navigate Away and Back
         await page.locator('a.btn-success').click(); // Click Home button in success message
