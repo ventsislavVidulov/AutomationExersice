@@ -74,7 +74,7 @@ export default defineConfig({
   projects: [
     {
       name: 'cleanup',
-      testMatch: 'cleanup(deleteAccount).spec', // Points to your specific cleanup file
+      testMatch: 'cleanup(deleteAccount).spec.ts', // Points to your specific cleanup file
     },
     {
       name: 'chromium',
@@ -84,7 +84,7 @@ export default defineConfig({
       teardown: 'cleanup',
 
       // Exclude the cleanup file so it doesn't run as a normal test
-      testIgnore: 'cleanup(deleteAccount).spec',
+      testIgnore: 'cleanup(deleteAccount).spec.ts',
     },
   ],
 
