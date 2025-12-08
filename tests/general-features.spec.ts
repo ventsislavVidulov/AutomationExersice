@@ -67,7 +67,7 @@ test.describe('General Features & Forms', () => {
   // Covers E2E-067
   test('E2E-067: Verify "API Testing" Link Navigation', async ({ page }) => {
     await page.locator('a:has-text("API Testing")').click();
-    const expectedURLPattern = /https:\/\/www.automationtesting.com|qaautomation\.net/;
-    await expect(page).toHaveURL(expectedURLPattern);
+    const expectedURL = 'https://automationexercise.com/api_list';
+    await expect(page).toHaveURL(expectedURL);
   });
 });
