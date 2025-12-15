@@ -292,10 +292,17 @@ export class PageManager {
   }
 
   /**
-   * Helper for aller success message in contact us form
+   * Helper to scroll the window to a specific Y coordinate.
+   * This removes the direct use of page.evaluate from tests.
    */
+  async scrollTo(y: number): Promise<void> {
+    await this.page.evaluate((yCoord) => window.scrollTo(0, yCoord), y);
+  }
 
-  async verifySuccessInContactUs(): Promise<void> {
-    await expect(this.alertContactSuccess()).toBeVisible();
-    }
+  /**
+   * Helper to resize the window to a specific size
+   */
+  async resizeWindow(width: number, height: number): Promise<void> {
+    await this.page.setViewportSize({ width, height });
+  }
 }

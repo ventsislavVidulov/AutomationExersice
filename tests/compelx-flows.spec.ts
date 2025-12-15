@@ -1,14 +1,9 @@
 import { test, expect } from '../fixtures';
-import { PageManager } from '../pages/PageManager';
-
-// NOTE: Assumes 'pm' is available as a fixture providing the PageManager instance,
-// and 'page' is available for assertions like toHaveURL().
 
 test.describe('Complex E2E Integration Scenarios', () => {
 
     // 1. E2E-053: Guest Cart Merging (Complex Session)
-    // Scenario: Guest adds item -> Login -> Verify Item is NOT lost (it merges)
-    test('E2E-053: Guest to User Cart Merging', async ({ pm, page }) => { // Inject 'page' for assertion
+    test('E2E-053: Guest to User Cart Merging', async ({ pm }) => {
         // 1. As Guest, add product (ID 2 - Men Tshirt)
         await pm.linkProducts().click();
         await pm.btnAddToCartID2().click();
@@ -26,7 +21,6 @@ test.describe('Complex E2E Integration Scenarios', () => {
     });
 
     // 2. E2E-012: Cross-Category Cart Build
-    // Scenario: Add items from different categories -> Verify Cart Composition
     test('E2E-012: Cross-Category Cart Composition', async ({ pm }) => {
         // 1. Add Women's Dress
         await pm.linkProducts().click();
@@ -43,14 +37,14 @@ test.describe('Complex E2E Integration Scenarios', () => {
 
         // 3. Verify Cart
         await pm.linkCartNavigation().click();
-        await expect(pm.cartItemRows()).toHaveCount(2); // Retaining rows locator
+        await expect(pm.cartItemRows()).toHaveCount(2);
         // Replaced raw locator
         await expect(pm.cartTableBody()).toContainText('Women > Dress');
         await expect(pm.cartTableBody()).toContainText('Men > Tshirts');
     });
 
     // 3. E2E-024: Checkout Address Consistency (Data Integrity)
-    test('E2E-024: Checkout Address Data Integrity', async ({ pm }) => { // Inject 'page' for assertion
+    test('E2E-024: Checkout Address Data Integrity', async ({ pm, page }) => {
         const uniqueEmail = `addr_${Date.now()}@test.com`;
         const uniqueAddr = '999 Unique Ave';
 
@@ -126,7 +120,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
     });
 
     // 6. E2E-066: Contact Us Form Reset
-    test('E2E-066: Contact Us Form State Reset', async ({ pm }) => { // Inject 'page' for assertion
+    test('E2E-066: Contact Us Form State Reset', async ({ pm }) => {
         await pm.linkContact().click();
 
         // Fill and Submit
@@ -136,7 +130,8 @@ test.describe('Complex E2E Integration Scenarios', () => {
         await pm.inputContactSubject().fill('Subject');
         await pm.inputContactMessage().fill('Msg');
         await pm.btnSubmitContact().click();
-        await pm.verifySuccessInContactUs(); // Use pm.page instead of raw page
+        // Replaced raw page.waitForSelector with PM locator-specific wait
+        await pm.alertContactSuccess().waitFor({ state: 'visible' });
 
         await expect(pm.alertContactSuccess()).toHaveText(
             'Success! Your details have been submitted successfully.'
@@ -144,7 +139,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
 
         // Navigate Away and Back
         await pm.btnSuccessHome().click();
-        expect(pm.getPageUrl()).toMatch('/');
+        await expect(pm.getPageUrl()).toMatch('/');
         await pm.linkContact().click();
 
         // Verify Empty
@@ -153,7 +148,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
     });
 
     // 7. E2E-058: Post-Order Navigation (Empty Cart Check)
-    test('E2E-058: Post-Order Cart Cleansing', async ({ pm }) => { // Inject 'page' for assertion
+    test('E2E-058: Post-Order Cart Cleansing', async ({ pm }) => {
         // Login
         await pm.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
 
@@ -167,7 +162,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
         await pm.fillPaymentDetails();
 
         // Order Confirmed
-        expect(pm.getPageUrl()).toMatch(/\/payment_done/);
+        await expect(pm.getPageUrl()).toMatch(/\/payment_done/);
 
         // Go Home then Cart
         await pm.goToHomePage();
@@ -200,7 +195,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
     });
 
     // 9. E2E-002: Cart Persistence After Logout/Login
-    test('E2E-002: Cart Persistence Across Sessions', async ({ pm }) => { // Inject 'page' for assertion
+    test('E2E-002: Cart Persistence Across Sessions', async ({ pm }) => {
         // 1. Login
         await pm.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
 
@@ -223,16 +218,18 @@ test.describe('Complex E2E Integration Scenarios', () => {
 
         // 6. Verify Item Persisted
         await pm.linkCartNavigation().click();
-        await expect(pm.cartItemRows()).toHaveCount(1); // Retaining rows locator
+        await expect(pm.cartItemRows()).toHaveCount(1);
     });
 
     // 10. E2E-075: Add to Cart via Overlay (Visual Flow)
     test('E2E-075: Add to Cart via Hover Overlay', async ({ pm }) => {
         await pm.goToHomePage(); // Home page
-        await pm.page.evaluate(() => window.scrollTo(0, 500)); // Use pm.page
+        // Replaced raw page.evaluate with PM helper
+        await pm.scrollTo(500);
 
-        const productCard = pm.productCard(0); // Use PM locator
-        const overlayBtn = pm.productCard(0).locator('.overlay-content .add-to-cart'); // Use PM locator and refine
+        // Product Card and Overlay Button use PM locators (Locator on Locator is fine)
+        const productCard = pm.productCard(0);
+        const overlayBtn = productCard.locator('.overlay-content .add-to-cart');
 
         // Force hover
         await productCard.hover();
@@ -251,15 +248,17 @@ test.describe('Complex E2E Integration Scenarios', () => {
 
         // 1. Apply Filter (Polo)
         await pm.linkBrandPolo().click();
-        await expect(pm.h2PageTitle()).toContainText('Brand - Polo Products'); // Use PM locator
+        // Replaced raw locator
+        await expect(pm.h2PageTitle()).toContainText('Brand - Polo Products');
 
         // 2. Perform Search ('Dress')
         await pm.inputSearch().fill('Dress');
         await pm.btnSearch().click();
 
         // 3. Verify "Searched Products" title appears (overriding Brand title)
-        await expect(pm.h2PageTitle()).toContainText('Searched Products'); // Use PM locator
-        const products = await pm.productsListWrapper().all(); // Use PM locator
+        // Replaced raw locator
+        await expect(pm.h2PageTitle()).toContainText('Searched Products');
+        const products = await pm.productsListWrapper().all();
         expect(products.length).toBeGreaterThan(0);
     });
 });
