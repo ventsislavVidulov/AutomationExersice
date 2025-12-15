@@ -72,19 +72,19 @@ export default defineConfig({
   // ],
 
   projects: [
-    {
-      name: 'cleanup',
-      testMatch: 'cleanup(deleteAccount).spec.ts', // Points to your specific cleanup file
-    },
+    // {
+    //   name: 'cleanup',
+    //   testMatch: 'cleanup(deleteAccount).spec.ts', // Points to your specific cleanup file
+    // },
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
       // This line is the magic. It tells Playwright:
       // "When this project finishes, run the 'cleanup' project."
-      teardown: 'cleanup',
+      // teardown: 'cleanup',
 
       // Exclude the cleanup file so it doesn't run as a normal test
-      testIgnore: 'cleanup(deleteAccount).spec.ts',
+      // testIgnore: 'cleanup(deleteAccount).spec.ts',
     },
   ],
 
