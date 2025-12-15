@@ -6,6 +6,10 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+/OldTests
 
 # Shared test state
 shared-state.json
+
+# Credentials
+appConstants.ts
