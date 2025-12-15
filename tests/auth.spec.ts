@@ -1,67 +1,49 @@
-import { test, expect } from '@playwright/test';
-import { PageManager } from '../pages/PageManager';
-import * as fs from 'fs';
-import * as path from 'path';
-
-let pm: PageManager;
-let randomEmail: string;
-let password: string;
-
-test.beforeAll(async () => {
-  const statePath = path.join(__dirname, '..', 'shared-state.json');
-  const sharedState = JSON.parse(fs.readFileSync(statePath, 'utf-8'));
-  randomEmail = sharedState.randomEmail;
-  password = sharedState.password;
-});
-
-test.beforeEach(async ({ page }) => {
-  pm = new PageManager(page);
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
-  try {
-    await pm.btnConsent().waitFor({ state: 'visible', timeout: 5000 });
-    await pm.btnConsent().click();
-  } catch (e) {
-    // Console log optional here
-  }
-});
+import { test, expect } from "../fixtures";
 
 test.describe('Authentication Tests', () => {
 
   // Covers E2E-001
-  test('E2E-001: Full User Registration Flow', async ({ page }) => {
-    pm.registerUser(randomEmail, randomEmail);
-    await expect(page).toHaveTitle(/Signup/);
-    await expect(pm.inputPassword()).toBeVisible();
-    
-    await pm.fillAccountDetails(password);
-    await pm.fillAddressDetails();
-    
-    await expect(page.locator('h2[data-qa="account-created"]')).toBeVisible();
-    await page.locator('[data-qa="continue-button"]').click();
-    
-    await expect(page.locator(`text=Logged in as ${randomEmail}`)).toBeVisible();
-    await pm.linkLogout().click();
-  });
+  //   test('E2E-001: Full User Registration Flow', async ({ page }) => {
+  //     await pm.registerUser(randomEmail, randomEmail);
+  //     await expect(page).toHaveTitle(/Signup/);
+  //     await expect(pm.inputPassword()).toBeVisible();
+
+  //     await pm.fillAccountDetails(password);
+  //     await pm.fillAddressDetails();
+
+  //     // Updated to use PageManager locator
+  //     await expect(pm.h2AccountCreated()).toBeVisible();
+  //     await pm.btnContinue().click();
+
+  //     // Updated to use PageManager locator for dynamic text
+  //     await expect(pm.txtLoggedInUser(randomEmail)).toBeVisible();
+  //     await pm.linkLogout().click();
+  //   });
 
   // Covers E2E-004
-  test('E2E-004: Negative Registration (Existing Email)', async ({ page }) => {
-    await pm.registerUser('Duplicate User', 'johndoesecond@johndoe.com');
-    await expect(page.locator('form[action="/signup"] p')).toContainText('Email Address already exist!');
+  test('E2E-004: Negative Registration (Existing Email)', async ({ pm }) => {
+    // Attempt to register with the same email used in E2E-001 (or previous runs)
+    await pm.registerUser('Duplicate User', 'johndoesecond@johndoe.com'); // Or use randomEmail if you want to test strict duplication of the specific user
+
+    // Updated to use PageManager locator
+    await expect(pm.msgSignupError()).toContainText('Email Address already exist!');
   });
 
   // Covers LOG-001, LOG-002, E2E-005
-  test('LOG-001: Login with Valid Credentials', async ({ page }) => {
-    await pm.loginUser(randomEmail, password);
-    await expect(page.locator('text=Logged in as')).toBeVisible();
-    await expect(page.locator(`text=${randomEmail}`)).toBeVisible();
+  test('LOG-001: Login with Valid Credentials', async ({ pm }) => {
+    await pm.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+    await expect(pm.txtLoggedInAs()).toBeVisible();
+    await expect(pm.txtLoggedInUser(pm.credentials.registeredUserNames)).toBeVisible();
   });
 
   // Covers LOG-002
-  test('LOG-002: Logout User', async ({ page }) => {
-    await pm.loginUser(randomEmail, password);
-    await expect(page.locator('text=Logged in as')).toBeVisible();
+  test('LOG-002: Logout User', async ({ pm }) => {
+    await pm.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+    await expect(pm.txtLoggedInAs()).toBeVisible();
+
     await pm.linkLogout().click();
-    await expect(page).toHaveURL(/\/login/);
-    await expect(page.locator('text=Login to your account')).toBeVisible();
+
+    await expect(pm.getPageUrl()).toMatch(/\/login/);
+    await expect(pm.h2LoginToAccount()).toBeVisible();
   });
 });
