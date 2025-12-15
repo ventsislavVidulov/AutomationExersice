@@ -64,17 +64,4 @@ test.describe('Authentication Tests', () => {
     await expect(page).toHaveURL(/\/login/);
     await expect(page.locator('text=Login to your account')).toBeVisible();
   });
-
-  // Covers E2E-032
-//   test('E2E-032: Account Deletion Flow', async ({ page }) => {
-//     await page.waitForTimeout(2000); // Wait for state to settle
-//     await pm.loginUser(randomEmail, password);
-//     await pm.linkDeleteAccount().click();
-
-//     await expect(pm.h2AccountDeleted()).toBeVisible();
-//     await expect(pm.h2AccountDeleted()).toContainText('Account Deleted!');
-
-//     await page.locator('[data-qa="continue-button"]').click();
-//     await expect(page.locator('a[href="/login"]')).toBeVisible();
-//   });
 });
