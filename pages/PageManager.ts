@@ -1,14 +1,14 @@
 // pages/PageManager.ts
 import { Page, Locator, expect } from '@playwright/test';
-import { userCredentials, Credentials } from '../appConstants';
+import { userCredentials, Credentials } from '../appConstants'; // Assuming appConstants.ts exists
 
 export class PageManager {
   readonly page: Page;
   readonly credentials: Credentials;
 
-
   constructor(page: Page) {
     this.page = page;
+    // Assuming userCredentials is imported from '../appConstants'
     this.credentials = userCredentials;
   }
 
@@ -21,6 +21,9 @@ export class PageManager {
   readonly getPageUrl = () => this.page.url();
   readonly getPageTitle = () => this.page.title();
 
+  // E2E-059: Mobile Viewport Check
+  readonly logo = () => this.page.locator('.logo');
+
 
   // ===========================================================================
   // 1. GLOBAL / COMMON
@@ -31,12 +34,14 @@ export class PageManager {
   readonly modalAdded = () => this.page.locator('#cartModal');
   readonly btnContinueShopping = () => this.page.locator('.close-modal');
   readonly btnViewCart = () => this.page.locator('u:has-text("View Cart")');
+  readonly modalBody = () => this.page.locator('.modal-body'); // E2E-075
 
-  // Generic Headers/Messages
+  // Generic Headers/Messages/Buttons
   readonly h2AccountCreated = () => this.page.locator('h2[data-qa="account-created"]');
   readonly h2AccountDeleted = () => this.page.locator('h2[data-qa="account-deleted"]');
   readonly h2LoginToAccount = () => this.page.locator('text=Login to your account');
   readonly btnContinue = () => this.page.locator('[data-qa="continue-button"]');
+  readonly btnSuccessHome = () => this.page.locator('a.btn-success'); // E2E-066: Home link in success message
 
   // Page-specific headers (new locators from tests)
   readonly h2PageTitle = () => this.page.locator('h2.title'); // Used for 'Women - Dress Products', 'Brand - Polo Products'
@@ -53,6 +58,7 @@ export class PageManager {
   readonly linkContact = () => this.page.locator('a[href="/contact_us"]');
   readonly linkLogout = () => this.page.locator('a[href="/logout"]');
   readonly linkDeleteAccount = () => this.page.locator('a[href="/delete_account"]');
+  readonly linkAPITesting = () => this.page.locator('a:has-text("API Testing")'); // E2E-067
 
   // Dynamic User Status
   readonly txtLoggedInAs = () => this.page.locator('text=Logged in as');
@@ -104,7 +110,7 @@ export class PageManager {
   readonly panelWomen = () => this.page.locator('#accordian a[href="#Women"]');
   readonly linkSubCategoryDress = () => this.page.locator('a[href="/category_products/1"]');
 
-  // Product List/Card Locators (new locators from tests)
+  // Product List/Card Locators
   readonly productCard = (index = 0) => this.page.locator('.single-products').nth(index); // Used for HOME-005
   readonly productCardImageWrapper = () => this.page.locator('.product-image-wrapper').first(); // Used for PRD-001 hover
   readonly productOverlay = (cardIndex = 0) => this.productCard(cardIndex).locator('.product-overlay'); // Used for HOME-005
@@ -113,6 +119,10 @@ export class PageManager {
   readonly btnAddToCartFromList = () => this.page.locator('.overlay-content .add-to-cart').first(); // Used for PRD-001
   readonly btnViewProductFromList = (index = 0) => this.page.locator('.choose a').nth(index); // Used for PD-005/HOME-009
   readonly productsListWrapper = () => this.page.locator('.product-image-wrapper'); // Used for PRD-002 count
+
+  // General Add to Cart / View Product (moved from tests)
+  readonly btnAddToCartFirst = () => this.page.locator('.add-to-cart').first(); // Generic first add-to-cart btn
+  readonly btnAddToCartID2 = () => this.page.locator('a[data-product-id="2"]').first(); // Specific item ID 2
 
   // Recommended Items
   readonly carouselRecommended = () => this.page.locator('#recommended-item-carousel');
@@ -123,6 +133,8 @@ export class PageManager {
   // ===========================================================================
   readonly productPrice = () => this.page.locator('.product-information span span').first();
   readonly productAvailability = () => this.page.locator('.product-information p:has-text("Availability:")');
+  readonly inputQuantityPDP = () => this.page.locator('#quantity'); // Quantity input on PDP
+  readonly btnAddToCartPDP = () => this.page.locator('button.cart'); // Add to Cart button on PDP
 
   // Review Form
   readonly reviewForm = () => this.page.locator('#review-form');
@@ -136,14 +148,22 @@ export class PageManager {
   // 6. CART
   // ===========================================================================
   readonly btnRemoveItem = () => this.page.locator('.cart_quantity_delete').first();
+  readonly btnRemoveItemAll = () => this.page.locator('.cart_quantity_delete'); // E2E-002 cleanup
   readonly cartEmptyMessage = () => this.page.locator('#empty_cart');
   readonly cartItemRows = () => this.page.locator('#cart_info_table tbody tr'); // Used for E2E-017 count
+  readonly btnCheckout = () => this.page.locator('.check_out'); // Checkout button on Cart page
+  readonly cartTableBody = () => this.page.locator('#cart_info_table tbody'); // E2E-012
 
   // Cart Table Data
   readonly btnQuantity = (itemIndex = 0) => this.page.locator('button.disabled').nth(itemIndex);
   readonly inputQuantity = (itemIndex = 0) => this.page.locator('input.cart_quantity_input').nth(itemIndex);
   readonly cartTotalPrice = () => this.page.locator('#cart_info_table .cart_total_price');
   readonly cartItemPrices = () => this.page.locator('#cart_info_table .cart_price');
+  readonly cartItemTotalPrices = () => this.page.locator('#cart_info td.cart_total'); // E2E-025 Total prices per row
+
+  // Specific Cart Items
+  readonly cartItemProduct2 = () => this.page.locator('#product-2'); // Specific item in cart
+  readonly cartItemProduct2Name = () => this.page.locator('#product-2 h4'); // Name of specific item in cart
 
   // ===========================================================================
   // 7. CHECKOUT & PAYMENT
@@ -154,6 +174,7 @@ export class PageManager {
   readonly checkoutBillingAddress = () => this.page.locator('#address_invoice');
   readonly textAreaComment = () => this.page.locator('textarea[name="message"]');
   readonly btnPlaceOrder = () => this.page.locator('a:has-text("Place Order")');
+  readonly inputCommentReadonly = () => this.page.locator('.form-control[readonly]'); // Used to verify comment after payment
 
   // Payment
   readonly inputCardName = () => this.page.locator('[data-qa="name-on-card"]');
@@ -164,8 +185,13 @@ export class PageManager {
   readonly btnPayConfirm = () => this.page.locator('[data-qa="pay-button"]');
   readonly orderConfirmationMessage = () => this.page.locator('.col-sm-9 p').first();
 
+  // Checkout Modal
+  readonly modalCheckout = () => this.page.locator('#checkoutModal'); // Modal when guest user tries to checkout
+  readonly linkRegisterLoginCheckout = () => this.page.locator('#checkoutModal u'); // Link to Register/Login in modal
+  readonly msgRegisterLoginCheckout = () => this.page.locator('p:has-text("Register / Login account to proceed on checkout.")'); // Message for guest checkout
+
   // ===========================================================================
-  // 8. CONTACT US
+  // 8. CONTACT US & SUBSCRIPTION
   // ===========================================================================
   readonly inputContactName = () => this.page.locator('[data-qa="name"]');
   readonly inputContactEmail = () => this.page.locator('[data-qa="email"]');
@@ -173,6 +199,12 @@ export class PageManager {
   readonly inputContactMessage = () => this.page.locator('[data-qa="message"]');
   readonly inputUploadFile = () => this.page.locator('input[name="upload_file"]');
   readonly btnSubmitContact = () => this.page.locator('[data-qa="submit-button"]');
+  readonly alertContactSuccess = () => this.page.locator('h2 + div.alert-success'); // Success message after contact form submission
+
+  // Subscription (Footer & Cart Page)
+  readonly inputSubscribeEmail = () => this.page.locator('#susbscribe_email');
+  readonly btnSubscribe = () => this.page.locator('#subscribe');
+  readonly msgSubscribeSuccess = () => this.page.locator('#success-subscribe');
 
   // ===========================================================================
   // 9. HELPER METHODS (Business Logic)
@@ -258,4 +290,12 @@ export class PageManager {
     // console.log('Handle advert called');
     this.page.once('popup', closeBtn => closeBtn.click('defs + path'))
   }
+
+  /**
+   * Helper for aller success message in contact us form
+   */
+
+  async verifySuccessInContactUs(): Promise<void> {
+    await expect(this.alertContactSuccess()).toBeVisible();
+    }
 }
