@@ -1,6 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
 
-export class BasePage {
+export abstract class BasePage {
   constructor(protected readonly page: Page) {}
 
   // ===========================================================================
