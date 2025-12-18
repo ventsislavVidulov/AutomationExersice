@@ -14,13 +14,13 @@ export const test = base.extend<MyFixtures>({
     const pm = new PageManager(page);
     
     // Navigate to the base URL
-    await pm.goToHomePage();
+    await pm.nav.goToHomePage();
 
     // Handle the Consent Popup (if it appears)
     try {
       // Short timeout because we don't want to wait long if it's not there
-      const consentBtn = pm.btnConsent(); 
-      await consentBtn.waitFor({ state: 'visible', timeout: 5000 });
+      const consentBtn = pm.nav.btnConsent(); 
+      await consentBtn.waitFor({ state: 'visible' });
       await consentBtn.click();
     } catch (e) {
       // Popup didn't appear, continue safely

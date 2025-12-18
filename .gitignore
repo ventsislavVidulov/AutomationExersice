@@ -13,3 +13,6 @@ shared-state.json
 
 # Credentials
 appConstants.ts
+
+# Old versions of page manager
+/pages/OldPageManagers/
