@@ -22,28 +22,34 @@ test.describe('Authentication Tests', () => {
 
   // Covers E2E-004
   test('E2E-004: Negative Registration (Existing Email)', async ({ pm }) => {
+
+    await pm.nav.linkLogin().click();
+
     // Attempt to register with the same email used in E2E-001 (or previous runs)
-    await pm.registerUser('Duplicate User', 'johndoesecond@johndoe.com'); // Or use randomEmail if you want to test strict duplication of the specific user
+    await pm.auth.registerUser('Duplicate User', 'johndoesecond@johndoe.com'); // Or use randomEmail if you want to test strict duplication of the specific user
 
     // Updated to use PageManager locator
-    await expect(pm.msgSignupError()).toContainText('Email Address already exist!');
+    await expect(pm.auth.msgSignupError()).toContainText('Email Address already exist!');
   });
 
   // Covers LOG-001, LOG-002, E2E-005
   test('LOG-001: Login with Valid Credentials', async ({ pm }) => {
-    await pm.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
-    await expect(pm.txtLoggedInAs()).toBeVisible();
-    await expect(pm.txtLoggedInUser(pm.credentials.registeredUserNames)).toBeVisible();
+    await pm.nav.linkLogin().click();
+    await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+    await expect(pm.nav.txtLoggedInAs()).toBeVisible();
+    await expect(pm.nav.txtLoggedInUser(pm.credentials.registeredUserNames)).toBeVisible();
   });
 
   // Covers LOG-002
   test('LOG-002: Logout User', async ({ pm }) => {
-    await pm.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
-    await expect(pm.txtLoggedInAs()).toBeVisible();
+    await pm.nav.linkLogin().click();
 
-    await pm.linkLogout().click();
+    await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+    await expect(pm.nav.txtLoggedInAs()).toBeVisible();
 
-    await expect(pm.getPageUrl()).toMatch(/\/login/);
-    await expect(pm.h2LoginToAccount()).toBeVisible();
+    await pm.nav.linkLogout().click();
+
+    await expect(pm.nav.getPageUrl()).toMatch(/\/login/);
+    await expect(pm.auth.h2LoginToAccount()).toBeVisible();
   });
 });
