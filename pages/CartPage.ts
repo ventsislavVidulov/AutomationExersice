@@ -1,4 +1,5 @@
 import { BasePage } from './BasePage';
+import { PaymentDetails } from '../testData/Types/PaymentDetails';
 
 export class CartPage extends BasePage {
   // ===========================================================================
@@ -53,12 +54,12 @@ export class CartPage extends BasePage {
   // ===========================================================================
   // BUSINESS LOGIC HELPERS
   // ===========================================================================
-  async fillPaymentDetails() {
-    await this.inputCardName().fill('John Doe');
-    await this.inputCardNumber().fill('4100 0000 0000 0000');
-    await this.inputCVC().fill('123');
-    await this.inputExpiryMonth().fill('01');
-    await this.inputExpiryYear().fill('2025');
+  async fillPaymentDetails({ inputCardName, inputCardNumber, inputCVC, inputExpiryMonth, inputExpiryYear }: PaymentDetails) {
+    await this.inputCardName().fill(inputCardName);
+    await this.inputCardNumber().fill(inputCardNumber);
+    await this.inputCVC().fill(inputCVC);
+    await this.inputExpiryMonth().fill(inputExpiryMonth);
+    await this.inputExpiryYear().fill(inputExpiryYear);
     await this.btnPayConfirm().click();
   }
 }

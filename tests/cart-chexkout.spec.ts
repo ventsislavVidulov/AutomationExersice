@@ -1,4 +1,5 @@
 import { test, expect } from '../fixtures';
+import {validPaymentData} from '../testData/paymentData'
 
 test.describe('Cart & Checkout Tests', () => {
 
@@ -65,7 +66,7 @@ test.describe('Cart & Checkout Tests', () => {
 
     await pm.cart.textAreaComment().fill('Please deliver before 5 PM.');
     await pm.cart.btnPlaceOrder().click();
-    await pm.cart.fillPaymentDetails();
+    await pm.cart.fillPaymentDetails(validPaymentData);
 
     await expect(pm.nav.getPageUrl()).toMatch(/\/payment_done/);
     await expect(pm.cart.orderConfirmationMessage()).toContainText('Congratulations! Your order has been confirmed!');
@@ -132,7 +133,7 @@ test.describe('Cart & Checkout Tests', () => {
 
     // Replaced raw locator
     await expect(pm.cart.inputCommentReadonly()).toHaveValue(commentText);
-    await pm.cart.fillPaymentDetails(); // Cleanup
+    await pm.cart.fillPaymentDetails(validPaymentData);
   });
 
   // Covers E2E-064
