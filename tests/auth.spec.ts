@@ -1,4 +1,6 @@
 import { test, expect } from "../fixtures";
+import { registeredUserCredentials } from "../testData/credentialsData";
+
 
 test.describe('Authentication Tests', () => {
 
@@ -35,16 +37,16 @@ test.describe('Authentication Tests', () => {
   // Covers LOG-001, LOG-002, E2E-005
   test('LOG-001: Login with Valid Credentials', async ({ pm }) => {
     await pm.nav.linkLogin().click();
-    await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+    await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
     await expect(pm.nav.txtLoggedInAs()).toBeVisible();
-    await expect(pm.nav.txtLoggedInUser(pm.credentials.registeredUserNames)).toBeVisible();
+    await expect(pm.nav.txtLoggedInUser(registeredUserCredentials.userNames)).toBeVisible();
   });
 
   // Covers LOG-002
   test('LOG-002: Logout User', async ({ pm }) => {
     await pm.nav.linkLogin().click();
 
-    await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+    await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
     await expect(pm.nav.txtLoggedInAs()).toBeVisible();
 
     await pm.nav.linkLogout().click();

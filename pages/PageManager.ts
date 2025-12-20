@@ -1,5 +1,4 @@
 import { Page } from '@playwright/test';
-import { userCredentials, Credentials } from '../appConstants';
 import { NavComponent } from './NavComponent';
 import { AuthPage } from './AuthPage';
 import { ProductPage } from './ProductPage';
@@ -10,8 +9,7 @@ import { PaymentPage } from './PaymentPage';
 
 export class PageManager {
   readonly page: Page;
-  readonly credentials: Credentials;
-  
+
   readonly nav: NavComponent;
   readonly auth: AuthPage;
   readonly products: ProductPage;
@@ -22,8 +20,7 @@ export class PageManager {
 
   constructor(page: Page) {
     this.page = page;
-    this.credentials = userCredentials;
-    
+
     this.nav = new NavComponent(page);
     this.auth = new AuthPage(page);
     this.products = new ProductPage(page);

@@ -1,5 +1,6 @@
 import { test, expect } from '../fixtures';
-import { validPaymentData, invalidPaymentData, emptyPaymentData } from '../testData/paymentData'
+import { validPaymentData, invalidPaymentData, emptyPaymentData } from '../testData/paymentData';
+import { registeredUserCredentials } from '../testData/credentialsData';
 
 
 test.describe('Cart & Checkout Tests', () => {
@@ -10,7 +11,7 @@ test.describe('Cart & Checkout Tests', () => {
 
       test(`Test With ${paymentData.name}`, async ({ pm }) => {
         await pm.nav.linkLogin().click();
-        await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+        await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
         await pm.nav.linkProducts().click();
         // Replaced raw locator
         await pm.products.btnAddToCartFirst().click();
@@ -35,7 +36,7 @@ test.describe('Cart & Checkout Tests', () => {
 
       test(`Test With ${paymentData.name}`, async ({ pm }) => {
         await pm.nav.linkLogin().click();
-        await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+        await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
         await pm.nav.linkProducts().click();
         // Replaced raw locator
         await pm.products.btnAddToCartFirst().click();
@@ -56,7 +57,7 @@ test.describe('Cart & Checkout Tests', () => {
 
     // Covers E2E-090
     test(`E2E-090: Full Order Placement And Payment With ${validPaymentData.name}`, async ({ pm }) => {
-      await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+      await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
       await pm.nav.linkProducts().click();
       // Replaced raw locator
       await pm.products.btnAddToCartFirst().click();
@@ -74,7 +75,7 @@ test.describe('Cart & Checkout Tests', () => {
 
     // Covers E2E-057
     test('E2E-057: Verify Order Comment Persistence', async ({ pm }) => {
-      await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+      await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
       await pm.nav.linkProducts().click();
       // Replaced raw locator
       await pm.products.btnAddToCartFirst().click();

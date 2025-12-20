@@ -1,7 +1,6 @@
 import { test, expect } from '../fixtures';
 import { validPaymentData } from '../testData/paymentData';
-import { PaymentDetails } from '../types/PaymentDetails';
-
+import { registeredUserCredentials } from '../testData/credentialsData';
 
 
 test.describe('Complex E2E Integration Scenarios', () => {
@@ -11,7 +10,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
         test('E2E-058: Post-Order Cart Cleansing', async ({ pm }) => {
 
             await pm.nav.linkLogin().click();
-            await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+            await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
 
             // Buy Item
             await pm.nav.linkProducts().click();
@@ -45,7 +44,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
 
         // 2. Login
         await pm.nav.linkLogin().click();
-        await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+        await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
 
         // 3. Go to Cart
         await pm.nav.linkCartNavigation().click();
@@ -82,7 +81,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
 
         // 1. Register new user with specific address
         await pm.nav.linkLogin().click();
-        await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+        await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
 
         // 2. Add item and Checkout
         await pm.nav.linkProducts().click();
@@ -189,7 +188,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
 
         // 1. Login 
 
-        await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+        await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
 
         // 2. Clear Cart
         await pm.nav.linkCartNavigation().click();
@@ -205,7 +204,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
         await pm.nav.linkLogout().click();
 
         // 5. Login Again
-        await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+        await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
 
         // 6. Verify Persisted
         await pm.nav.linkCartNavigation().click();

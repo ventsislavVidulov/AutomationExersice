@@ -12,7 +12,7 @@ node_modules/
 shared-state.json
 
 # Credentials
-appConstants.ts
+/testData/credentialsData.ts
 
 # Old versions of page manager
 /pages/OldPageManagers/
