@@ -18,8 +18,8 @@ test.describe('Cart & Checkout Tests', () => {
         // Replaced raw locator
         await pm.cart.btnCheckout().click();
 
-        await pm.cart.textAreaComment().fill('Please deliver before 5 PM.');
-        await pm.cart.btnPlaceOrder().click();
+        await pm.checkout.textAreaComment().fill('Please deliver before 5 PM.');
+        await pm.checkout.btnPlaceOrder().click();
         await pm.cart.fillPaymentDetails(paymentData);
 
         await expect(pm.nav.getPageUrl()).not.toMatch(/\/payment_done/);
@@ -43,8 +43,8 @@ test.describe('Cart & Checkout Tests', () => {
         // Replaced raw locator
         await pm.cart.btnCheckout().click();
 
-        await pm.cart.textAreaComment().fill('Please deliver before 5 PM.');
-        await pm.cart.btnPlaceOrder().click();
+        await pm.checkout.textAreaComment().fill('Please deliver before 5 PM.');
+        await pm.checkout.btnPlaceOrder().click();
         await pm.cart.fillPaymentDetails(paymentData);
 
         expect(pm.nav.getPageUrl()).not.toMatch(/\/payment_done/);
@@ -64,8 +64,8 @@ test.describe('Cart & Checkout Tests', () => {
       // Replaced raw locator
       await pm.cart.btnCheckout().click();
 
-      await pm.cart.textAreaComment().fill('Please deliver before 5 PM.');
-      await pm.cart.btnPlaceOrder().click();
+      await pm.checkout.textAreaComment().fill('Please deliver before 5 PM.');
+      await pm.checkout.btnPlaceOrder().click();
       await pm.cart.fillPaymentDetails(validPaymentData);
 
       await expect(pm.nav.getPageUrl()).toMatch(/\/payment_done/);
@@ -83,11 +83,11 @@ test.describe('Cart & Checkout Tests', () => {
       await pm.cart.btnCheckout().click();
 
       const commentText = 'Please ensure the packaging is sturdy.';
-      await pm.cart.textAreaComment().fill(commentText);
-      await pm.cart.btnPlaceOrder().click();
+      await pm.checkout.textAreaComment().fill(commentText);
+      await pm.checkout.btnPlaceOrder().click();
 
       // Replaced raw locator
-      await expect(pm.cart.inputCommentReadonly()).toHaveValue(commentText);
+      await expect(pm.checkout.inputCommentReadonly()).toHaveValue(commentText);
       await pm.cart.fillPaymentDetails(validPaymentData);
     });
   });

@@ -18,8 +18,8 @@ test.describe('Complex E2E Integration Scenarios', () => {
             await pm.products.btnAddToCartFirst().click();
             await pm.nav.btnViewCart().click();
             await pm.cart.btnCheckout().click();
-            await pm.cart.textAreaComment().fill('Final test');
-            await pm.cart.btnPlaceOrder().click();
+            await pm.checkout.textAreaComment().fill('Final test');
+            await pm.checkout.btnPlaceOrder().click();
 
             // FIX 4: Use the 'params' fixture here instead of the import
             await pm.cart.fillPaymentDetails(validPaymentData);
@@ -91,9 +91,9 @@ test.describe('Complex E2E Integration Scenarios', () => {
         await pm.cart.btnCheckout().click();
 
         // 3. Verify Address on Checkout Page
-        await expect(pm.cart.checkoutDeliveryAddress()).toContainText('Brahmaputra blv. 33');
-        await expect(pm.cart.checkoutDeliveryAddress()).toContainText('Vancover');
-        await expect(pm.cart.checkoutDeliveryAddress()).toContainText('Canada');
+        await expect(pm.checkout.checkoutDeliveryAddress()).toContainText('Brahmaputra blv. 33');
+        await expect(pm.checkout.checkoutDeliveryAddress()).toContainText('Vancover');
+        await expect(pm.checkout.checkoutDeliveryAddress()).toContainText('Canada');
     });
 
     // 4. E2E-082: Cart Item Removal & Re-addition (State Resilience)

@@ -27,14 +27,7 @@ export class CartPage extends BasePage {
   readonly cartItemProductByIndex = (index = 1) => this.page.locator(`#product-${index}`);
   readonly cartItemProductNameByIndex = (index = 1) => this.page.locator(`#product-${index} h4`);
 
-  // ===========================================================================
-  // CHECKOUT & PAYMENT (Related to Cart Workflow)
-  // ===========================================================================
-  readonly checkoutDeliveryAddress = () => this.page.locator('#address_delivery');
-  readonly checkoutBillingAddress = () => this.page.locator('#address_invoice');
-  readonly textAreaComment = () => this.page.locator('textarea[name="message"]');
-  readonly btnPlaceOrder = () => this.page.locator('a:has-text("Place Order")');
-  readonly inputCommentReadonly = () => this.page.locator('.form-control[readonly]');
+
 
   readonly inputCardName = () => this.page.locator('[data-qa="name-on-card"]');
   readonly inputCardNumber = () => this.page.locator('[data-qa="card-number"]');
