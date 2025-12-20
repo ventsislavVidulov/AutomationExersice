@@ -1,6 +1,47 @@
-import { test, expect } from '../fixtures';
+import { test, createParameterizedTest, expect } from '../fixtures';
+import { validPaymentData } from '../testData/paymentData';
+import { PaymentDetails } from '../types/PaymentDetails';
+
+
 
 test.describe('Complex E2E Integration Scenarios', () => {
+
+    const testWithParameters = createParameterizedTest<PaymentDetails>();
+
+    test.describe('Payment Parameterized Tests', () => {
+
+        // FIX 1: Use the object syntax for .use()
+        testWithParameters.use({ params: validPaymentData });
+
+        // FIX 2: Use 'paymentTest' instead of 'testWithParameters'
+        // FIX 3: Destructure 'params' so you can use it inside the body
+        testWithParameters('E2E-058: Post-Order Cart Cleansing', async ({ pm, params }) => {
+
+            await pm.nav.linkLogin().click();
+            await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+
+            // Buy Item
+            await pm.nav.linkProducts().click();
+            await pm.products.btnAddToCartFirst().click();
+            await pm.nav.btnViewCart().click();
+            await pm.cart.btnCheckout().click();
+            await pm.cart.textAreaComment().fill('Final test');
+            await pm.cart.btnPlaceOrder().click();
+
+            // FIX 4: Use the 'params' fixture here instead of the import
+            await pm.cart.fillPaymentDetails(params);
+
+            // Order Confirmed
+            await expect(pm.nav.getPageUrl()).toMatch(/\/payment_done/);
+
+            // Go Home then Cart
+            await pm.nav.goToHomePage();
+            await pm.nav.linkCartNavigation().click();
+
+            // Verify Empty
+            await expect(pm.cart.cartEmptyMessage()).toBeVisible();
+        });
+    });
 
     // 1. E2E-053: Guest Cart Merging (Complex Session)
     test('E2E-053: Guest to User Cart Merging', async ({ pm }) => {
@@ -17,8 +58,8 @@ test.describe('Complex E2E Integration Scenarios', () => {
         await pm.nav.linkCartNavigation().click();
 
         // 4. Verify item exists associated with the account now
-        await expect(pm.cart.cartItemProduct2()).toBeVisible();
-        await expect(pm.cart.cartItemProduct2Name()).toContainText('Men Tshirt');
+        await expect(pm.cart.cartItemProductByIndex(2)).toBeVisible();
+        await expect(pm.cart.cartItemProductNameByIndex(2)).toContainText('Men Tshirt');
     });
 
     // 2. E2E-012: Cross-Category Cart Build
@@ -125,33 +166,6 @@ test.describe('Complex E2E Integration Scenarios', () => {
         // Verify Empty
         await expect(pm.support.inputContactName()).toBeEmpty();
         await expect(pm.support.inputContactMessage()).toBeEmpty();
-    });
-
-    // 7. E2E-058: Post-Order Navigation (Empty Cart Check)
-    test('E2E-058: Post-Order Cart Cleansing', async ({ pm }) => {
-
-        await pm.nav.linkLogin().click();
-
-        await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
-
-        // Buy Item
-        await pm.nav.linkProducts().click();
-        await pm.products.btnAddToCartFirst().click();
-        await pm.nav.btnViewCart().click();
-        await pm.cart.btnCheckout().click();
-        await pm.cart.textAreaComment().fill('Final test');
-        await pm.cart.btnPlaceOrder().click();
-        await pm.cart.fillPaymentDetails();
-
-        // Order Confirmed
-        await expect(pm.nav.getPageUrl()).toMatch(/\/payment_done/);
-
-        // Go Home then Cart
-        await pm.nav.goToHomePage();
-        await pm.nav.linkCartNavigation().click();
-
-        // Verify Empty
-        await expect(pm.cart.cartEmptyMessage()).toBeVisible();
     });
 
     // 8. E2E-013: Review Form Validation (Flow Interruption)

@@ -1,5 +1,5 @@
 import { BasePage } from './BasePage';
-import { PaymentDetails } from '../testData/Types/PaymentDetails';
+import { PaymentDetails } from '../types/PaymentDetails';
 
 export class CartPage extends BasePage {
   // ===========================================================================
@@ -24,8 +24,8 @@ export class CartPage extends BasePage {
   // ===========================================================================
   // SPECIFIC CART ITEMS
   // ===========================================================================
-  readonly cartItemProduct2 = () => this.page.locator('#product-2');
-  readonly cartItemProduct2Name = () => this.page.locator('#product-2 h4');
+  readonly cartItemProductByIndex = (index = 1) => this.page.locator(`#product-${index}`);
+  readonly cartItemProductNameByIndex = (index = 1) => this.page.locator(`#product-${index} h4`);
 
   // ===========================================================================
   // CHECKOUT & PAYMENT (Related to Cart Workflow)

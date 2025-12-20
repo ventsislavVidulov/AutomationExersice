@@ -1,38 +1,34 @@
-import { test as base } from '@playwright/test';
-import { PageManager } from './pages/PageManager'; // Adjust path to where your PageManager class is
+import { test as base, expect } from '@playwright/test';
+import { PageManager } from './pages/PageManager';
 
-// 1. Declare the types for your custom fixtures
-type MyFixtures = {
+type PMFixture = {
   pm: PageManager;
 };
 
-// 2. Extend the base test to include your new 'pm' fixture
-export const test = base.extend<MyFixtures>({
-  
+type ParamFixture<T> = {
+  params: T;
+};
+
+// 1. Your Base Fixture
+export const test = base.extend<PMFixture>({
   pm: async ({ page }, use) => {
-    // --- Setup Phase ---
     const pm = new PageManager(page);
-    
-    // Navigate to the base URL
     await pm.nav.goToHomePage();
-
-    // Handle the Consent Popup (if it appears)
-    try {
-      // Short timeout because we don't want to wait long if it's not there
-      const consentBtn = pm.nav.btnConsent(); 
-      await consentBtn.waitFor({ state: 'visible' });
-      await consentBtn.click();
-    } catch (e) {
-      // Popup didn't appear, continue safely
-    }
-
-    // --- Pass the fixture to the test ---
+    const consentBtn = pm.nav.btnConsent();
+    await consentBtn.waitFor({ state: 'visible' });
+    await consentBtn.click();
     await use(pm);
-
-    // --- Teardown Phase (Optional) ---
-    // Code here runs after the test finishes (e.g., clearing local storage)
   },
 });
 
-// 3. Re-export expect so you only need to import from this file
-export { expect } from '@playwright/test';
+// 2. Generic Function
+export function createParameterizedTest<T>() {
+  return test.extend<ParamFixture<T>>({
+    // Wrap the generic T in an async fixture function
+    params: async ({ }, use) => {
+      await use({} as T);
+    },
+  });
+}
+
+export { expect };

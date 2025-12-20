@@ -1,7 +1,104 @@
-import { test, expect } from '../fixtures';
-import {validPaymentData} from '../testData/paymentData'
+import { test, createParameterizedTest, expect } from '../fixtures';
+import { validPaymentData, invalidPaymentData, emptyPaymentData } from '../testData/paymentData'
+import { PaymentDetails } from '../types/PaymentDetails';
+
+const testWithPaymentData = createParameterizedTest<PaymentDetails>();
 
 test.describe('Cart & Checkout Tests', () => {
+
+  invalidPaymentData.forEach((paymentData) => {
+
+    test.describe('Parametrized Tests With Invalid Payment Data', () => {
+
+      testWithPaymentData.use({ params: paymentData });
+
+      testWithPaymentData(`Test With ${paymentData.name}`, async ({ pm, params }) => {
+        await pm.nav.linkLogin().click();
+        await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+        await pm.nav.linkProducts().click();
+        // Replaced raw locator
+        await pm.products.btnAddToCartFirst().click();
+        await pm.nav.btnViewCart().click();
+        // Replaced raw locator
+        await pm.cart.btnCheckout().click();
+
+        await pm.cart.textAreaComment().fill('Please deliver before 5 PM.');
+        await pm.cart.btnPlaceOrder().click();
+        await pm.cart.fillPaymentDetails(params);
+
+        await expect(pm.nav.getPageUrl()).not.toMatch(/\/payment_done/);
+        await expect(pm.cart?.orderConfirmationMessage()).not.toContainText('Congratulations! Your order has been confirmed!');
+      })
+    })
+  });
+
+
+  emptyPaymentData.forEach((paymentData) => {
+
+    test.describe('Parametrized Tests With Empty Payment Data', () => {
+
+      testWithPaymentData.use({ params: paymentData });
+
+      testWithPaymentData(`Test With ${paymentData.name}`, async ({ pm, params }) => {
+        await pm.nav.linkLogin().click();
+        await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+        await pm.nav.linkProducts().click();
+        // Replaced raw locator
+        await pm.products.btnAddToCartFirst().click();
+        await pm.nav.btnViewCart().click();
+        // Replaced raw locator
+        await pm.cart.btnCheckout().click();
+
+        await pm.cart.textAreaComment().fill('Please deliver before 5 PM.');
+        await pm.cart.btnPlaceOrder().click();
+        await pm.cart.fillPaymentDetails(params);
+
+        expect(pm.nav.getPageUrl()).not.toMatch(/\/payment_done/);
+      })
+    })
+  });
+
+  test.describe('Parametrized Tests With Valid Payment Data', () => {
+
+    testWithPaymentData.use({ params: validPaymentData });
+
+    // Covers E2E-090
+    testWithPaymentData(`E2E-090: Full Order Placement And Payment With ${validPaymentData.name}`, async ({ pm, params }) => {
+      await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+      await pm.nav.linkProducts().click();
+      // Replaced raw locator
+      await pm.products.btnAddToCartFirst().click();
+      await pm.nav.btnViewCart().click();
+      // Replaced raw locator
+      await pm.cart.btnCheckout().click();
+
+      await pm.cart.textAreaComment().fill('Please deliver before 5 PM.');
+      await pm.cart.btnPlaceOrder().click();
+      await pm.cart.fillPaymentDetails(params);
+
+      await expect(pm.nav.getPageUrl()).toMatch(/\/payment_done/);
+      await expect(pm.cart.orderConfirmationMessage()).toContainText('Congratulations! Your order has been confirmed!');
+    });
+
+    // Covers E2E-057
+    testWithPaymentData('E2E-057: Verify Order Comment Persistence', async ({ pm , params}) => {
+      await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
+      await pm.nav.linkProducts().click();
+      // Replaced raw locator
+      await pm.products.btnAddToCartFirst().click();
+      await pm.nav.btnViewCart().click();
+      // Replaced raw locator
+      await pm.cart.btnCheckout().click();
+
+      const commentText = 'Please ensure the packaging is sturdy.';
+      await pm.cart.textAreaComment().fill(commentText);
+      await pm.cart.btnPlaceOrder().click();
+
+      // Replaced raw locator
+      await expect(pm.cart.inputCommentReadonly()).toHaveValue(commentText);
+      await pm.cart.fillPaymentDetails(params);
+    });
+  });
 
   // Covers CART-001, CART-002, E2E-021
   test('CART-001: Verify Cart and Checkout Flow (Guest)', async ({ pm }) => {
@@ -54,24 +151,6 @@ test.describe('Cart & Checkout Tests', () => {
     expect(newTotalPrice).toBeCloseTo(unitPrice * 5, 0.01);
   });
 
-  // Covers E2E-090
-  test('E2E-090: Full Order Placement and Payment', async ({ pm }) => {
-    await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
-    await pm.nav.linkProducts().click();
-    // Replaced raw locator
-    await pm.products.btnAddToCartFirst().click();
-    await pm.nav.btnViewCart().click();
-    // Replaced raw locator
-    await pm.cart.btnCheckout().click();
-
-    await pm.cart.textAreaComment().fill('Please deliver before 5 PM.');
-    await pm.cart.btnPlaceOrder().click();
-    await pm.cart.fillPaymentDetails(validPaymentData);
-
-    await expect(pm.nav.getPageUrl()).toMatch(/\/payment_done/);
-    await expect(pm.cart.orderConfirmationMessage()).toContainText('Congratulations! Your order has been confirmed!');
-  });
-
   // Covers E2E-107
   test('E2E-107: Product Quantity Input Boundary Check', async ({ pm }) => {
     await pm.nav.linkProducts().click();
@@ -115,25 +194,6 @@ test.describe('Cart & Checkout Tests', () => {
     const actualSum = parseFloat(firstActualTotalText.replace(/[^0-9.]|(?<!\d)\./g, '')) + parseFloat(secondActualTotalText.replace(/[^0-9.]|(?<!\d)\./g, ''));
 
     expect(actualSum).toBeCloseTo(expectedTotal, 0.01);
-  });
-
-  // Covers E2E-057
-  test('E2E-057: Verify Order Comment Persistence', async ({ pm }) => {
-    await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
-    await pm.nav.linkProducts().click();
-    // Replaced raw locator
-    await pm.products.btnAddToCartFirst().click();
-    await pm.nav.btnViewCart().click();
-    // Replaced raw locator
-    await pm.cart.btnCheckout().click();
-
-    const commentText = 'Please ensure the packaging is sturdy.';
-    await pm.cart.textAreaComment().fill(commentText);
-    await pm.cart.btnPlaceOrder().click();
-
-    // Replaced raw locator
-    await expect(pm.cart.inputCommentReadonly()).toHaveValue(commentText);
-    await pm.cart.fillPaymentDetails(validPaymentData);
   });
 
   // Covers E2E-064
