@@ -22,7 +22,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
             await pm.checkout.btnPlaceOrder().click();
 
             // FIX 4: Use the 'params' fixture here instead of the import
-            await pm.cart.fillPaymentDetails(validPaymentData);
+            await pm.payment.fillPaymentDetails(validPaymentData);
 
             // Order Confirmed
             await expect(pm.nav.getPageUrl()).toMatch(/\/payment_done/);

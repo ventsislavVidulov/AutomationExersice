@@ -20,10 +20,10 @@ test.describe('Cart & Checkout Tests', () => {
 
         await pm.checkout.textAreaComment().fill('Please deliver before 5 PM.');
         await pm.checkout.btnPlaceOrder().click();
-        await pm.cart.fillPaymentDetails(paymentData);
+        await pm.payment.fillPaymentDetails(paymentData);
 
         await expect(pm.nav.getPageUrl()).not.toMatch(/\/payment_done/);
-        await expect(pm.cart?.orderConfirmationMessage()).not.toContainText('Congratulations! Your order has been confirmed!');
+        await expect(pm.payment.orderConfirmationMessage()).not.toContainText('Congratulations! Your order has been confirmed!');
       })
     })
   });
@@ -45,7 +45,7 @@ test.describe('Cart & Checkout Tests', () => {
 
         await pm.checkout.textAreaComment().fill('Please deliver before 5 PM.');
         await pm.checkout.btnPlaceOrder().click();
-        await pm.cart.fillPaymentDetails(paymentData);
+        await pm.payment.fillPaymentDetails(paymentData);
 
         expect(pm.nav.getPageUrl()).not.toMatch(/\/payment_done/);
       })
@@ -66,10 +66,10 @@ test.describe('Cart & Checkout Tests', () => {
 
       await pm.checkout.textAreaComment().fill('Please deliver before 5 PM.');
       await pm.checkout.btnPlaceOrder().click();
-      await pm.cart.fillPaymentDetails(validPaymentData);
+      await pm.payment.fillPaymentDetails(validPaymentData);
 
       await expect(pm.nav.getPageUrl()).toMatch(/\/payment_done/);
-      await expect(pm.cart.orderConfirmationMessage()).toContainText('Congratulations! Your order has been confirmed!');
+      await expect(pm.payment.orderConfirmationMessage()).toContainText('Congratulations! Your order has been confirmed!');
     });
 
     // Covers E2E-057
@@ -88,7 +88,7 @@ test.describe('Cart & Checkout Tests', () => {
 
       // Replaced raw locator
       await expect(pm.checkout.inputCommentReadonly()).toHaveValue(commentText);
-      await pm.cart.fillPaymentDetails(validPaymentData);
+      await pm.payment.fillPaymentDetails(validPaymentData);
     });
   });
 

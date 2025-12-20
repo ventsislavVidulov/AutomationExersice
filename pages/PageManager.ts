@@ -5,7 +5,8 @@ import { AuthPage } from './AuthPage';
 import { ProductPage } from './ProductPage';
 import { CartPage } from './CartPage';
 import { SupportPage } from './SupportPage';
-import { CheckOutPage } from './CheckOutPage';``
+import { CheckOutPage } from './CheckOutPage';
+import { PaymentPage } from './PaymentPage';
 
 export class PageManager {
   readonly page: Page;
@@ -17,7 +18,7 @@ export class PageManager {
   readonly cart: CartPage;
   readonly support: SupportPage;
   readonly checkout: CheckOutPage;
-
+  readonly payment: PaymentPage;
 
   constructor(page: Page) {
     this.page = page;
@@ -29,5 +30,6 @@ export class PageManager {
     this.cart = new CartPage(page);
     this.support = new SupportPage(page);
     this.checkout = new CheckOutPage(page);
+    this.payment = new PaymentPage(page);
   }
 }
