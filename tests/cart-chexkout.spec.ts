@@ -1,8 +1,6 @@
-import { test, createParameterizedTest, expect } from '../fixtures';
+import { test, expect } from '../fixtures';
 import { validPaymentData, invalidPaymentData, emptyPaymentData } from '../testData/paymentData'
-import { PaymentDetails } from '../types/PaymentDetails';
 
-const testWithPaymentData = createParameterizedTest<PaymentDetails>();
 
 test.describe('Cart & Checkout Tests', () => {
 
@@ -10,9 +8,7 @@ test.describe('Cart & Checkout Tests', () => {
 
     test.describe('Parametrized Tests With Invalid Payment Data', () => {
 
-      testWithPaymentData.use({ params: paymentData });
-
-      testWithPaymentData(`Test With ${paymentData.name}`, async ({ pm, params }) => {
+      test(`Test With ${paymentData.name}`, async ({ pm }) => {
         await pm.nav.linkLogin().click();
         await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
         await pm.nav.linkProducts().click();
@@ -24,7 +20,7 @@ test.describe('Cart & Checkout Tests', () => {
 
         await pm.cart.textAreaComment().fill('Please deliver before 5 PM.');
         await pm.cart.btnPlaceOrder().click();
-        await pm.cart.fillPaymentDetails(params);
+        await pm.cart.fillPaymentDetails(paymentData);
 
         await expect(pm.nav.getPageUrl()).not.toMatch(/\/payment_done/);
         await expect(pm.cart?.orderConfirmationMessage()).not.toContainText('Congratulations! Your order has been confirmed!');
@@ -37,9 +33,7 @@ test.describe('Cart & Checkout Tests', () => {
 
     test.describe('Parametrized Tests With Empty Payment Data', () => {
 
-      testWithPaymentData.use({ params: paymentData });
-
-      testWithPaymentData(`Test With ${paymentData.name}`, async ({ pm, params }) => {
+      test(`Test With ${paymentData.name}`, async ({ pm }) => {
         await pm.nav.linkLogin().click();
         await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
         await pm.nav.linkProducts().click();
@@ -51,7 +45,7 @@ test.describe('Cart & Checkout Tests', () => {
 
         await pm.cart.textAreaComment().fill('Please deliver before 5 PM.');
         await pm.cart.btnPlaceOrder().click();
-        await pm.cart.fillPaymentDetails(params);
+        await pm.cart.fillPaymentDetails(paymentData);
 
         expect(pm.nav.getPageUrl()).not.toMatch(/\/payment_done/);
       })
@@ -60,10 +54,8 @@ test.describe('Cart & Checkout Tests', () => {
 
   test.describe('Parametrized Tests With Valid Payment Data', () => {
 
-    testWithPaymentData.use({ params: validPaymentData });
-
     // Covers E2E-090
-    testWithPaymentData(`E2E-090: Full Order Placement And Payment With ${validPaymentData.name}`, async ({ pm, params }) => {
+    test(`E2E-090: Full Order Placement And Payment With ${validPaymentData.name}`, async ({ pm }) => {
       await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
       await pm.nav.linkProducts().click();
       // Replaced raw locator
@@ -74,14 +66,14 @@ test.describe('Cart & Checkout Tests', () => {
 
       await pm.cart.textAreaComment().fill('Please deliver before 5 PM.');
       await pm.cart.btnPlaceOrder().click();
-      await pm.cart.fillPaymentDetails(params);
+      await pm.cart.fillPaymentDetails(validPaymentData);
 
       await expect(pm.nav.getPageUrl()).toMatch(/\/payment_done/);
       await expect(pm.cart.orderConfirmationMessage()).toContainText('Congratulations! Your order has been confirmed!');
     });
 
     // Covers E2E-057
-    testWithPaymentData('E2E-057: Verify Order Comment Persistence', async ({ pm , params}) => {
+    test('E2E-057: Verify Order Comment Persistence', async ({ pm }) => {
       await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
       await pm.nav.linkProducts().click();
       // Replaced raw locator
@@ -96,7 +88,7 @@ test.describe('Cart & Checkout Tests', () => {
 
       // Replaced raw locator
       await expect(pm.cart.inputCommentReadonly()).toHaveValue(commentText);
-      await pm.cart.fillPaymentDetails(params);
+      await pm.cart.fillPaymentDetails(validPaymentData);
     });
   });
 

@@ -1,4 +1,4 @@
-import { test, createParameterizedTest, expect } from '../fixtures';
+import { test, expect } from '../fixtures';
 import { validPaymentData } from '../testData/paymentData';
 import { PaymentDetails } from '../types/PaymentDetails';
 
@@ -6,16 +6,9 @@ import { PaymentDetails } from '../types/PaymentDetails';
 
 test.describe('Complex E2E Integration Scenarios', () => {
 
-    const testWithParameters = createParameterizedTest<PaymentDetails>();
-
     test.describe('Payment Parameterized Tests', () => {
 
-        // FIX 1: Use the object syntax for .use()
-        testWithParameters.use({ params: validPaymentData });
-
-        // FIX 2: Use 'paymentTest' instead of 'testWithParameters'
-        // FIX 3: Destructure 'params' so you can use it inside the body
-        testWithParameters('E2E-058: Post-Order Cart Cleansing', async ({ pm, params }) => {
+        test('E2E-058: Post-Order Cart Cleansing', async ({ pm }) => {
 
             await pm.nav.linkLogin().click();
             await pm.auth.loginUser(pm.credentials.registeredEmail, pm.credentials.registeredPassword);
@@ -29,7 +22,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
             await pm.cart.btnPlaceOrder().click();
 
             // FIX 4: Use the 'params' fixture here instead of the import
-            await pm.cart.fillPaymentDetails(params);
+            await pm.cart.fillPaymentDetails(validPaymentData);
 
             // Order Confirmed
             await expect(pm.nav.getPageUrl()).toMatch(/\/payment_done/);

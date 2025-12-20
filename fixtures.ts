@@ -22,13 +22,13 @@ export const test = base.extend<PMFixture>({
 });
 
 // 2. Generic Function
-export function createParameterizedTest<T>() {
-  return test.extend<ParamFixture<T>>({
-    // Wrap the generic T in an async fixture function
-    params: async ({ }, use) => {
-      await use({} as T);
-    },
-  });
-}
+// export function createParameterizedTest<T>() {
+//   return test.extend<ParamFixture<T>>({
+//     // Wrap the generic T in an async fixture function
+//     params: async ({ }, use) => {
+//       await use({} as T);
+//     },
+//   });
+// }
 
 export { expect };
