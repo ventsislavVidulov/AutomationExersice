@@ -57,6 +57,7 @@ test.describe('Cart & Checkout Tests', () => {
 
     // Covers E2E-090
     test(`E2E-090: Full Order Placement And Payment With ${validPaymentData.name}`, async ({ pm }) => {
+      await pm.nav.linkLogin().click();
       await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
       await pm.nav.linkProducts().click();
       // Replaced raw locator
@@ -75,6 +76,7 @@ test.describe('Cart & Checkout Tests', () => {
 
     // Covers E2E-057
     test('E2E-057: Verify Order Comment Persistence', async ({ pm }) => {
+      await pm.nav.linkLogin().click();
       await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
       await pm.nav.linkProducts().click();
       // Replaced raw locator
@@ -118,7 +120,7 @@ test.describe('Cart & Checkout Tests', () => {
   test('CART-003: Remove Product From Cart', async ({ pm }) => {
     await pm.nav.linkProducts().click();
     // Replaced raw locator
-    await pm.products.btnAddToCartFirst().click();
+    await pm.products.btnAddToCartNth(8).click();
     await pm.nav.btnViewCart().click();
     await pm.cart.btnRemoveItem().click();
     await expect(pm.cart.cartEmptyMessage()).toBeVisible();
