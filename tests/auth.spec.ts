@@ -39,7 +39,7 @@ test.describe('Authentication Tests', () => {
     await pm.nav.linkLogin().click();
     await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
     await expect(pm.nav.txtLoggedInAs()).toBeVisible();
-    await expect(pm.nav.txtLoggedInUser(registeredUserCredentials.userNames)).toBeVisible();
+    await expect(pm.nav.txtLoggedInUser(registeredUserCredentials.userFullName)).toBeVisible();
   });
 
   // Covers LOG-002
