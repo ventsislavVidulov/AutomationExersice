@@ -22,13 +22,13 @@ export class ProductPage extends BasePage {
   // ===========================================================================
   // PRODUCT LISTS & CARDS
   // ===========================================================================
-  readonly productCard = (index = 0) => this.page.locator('.single-products').nth(index);
+  readonly productCard = (index = 1) => this.page.locator('.single-products').nth(index - 1);
   readonly productCardImageWrapper = () => this.page.locator('.product-image-wrapper').first();
-  readonly productOverlay = (cardIndex = 0) => this.productCard(cardIndex).locator('.product-overlay');
+  readonly productOverlay = (cardIndex = 1) => this.productCard(cardIndex).locator('.product-overlay');
   readonly productPriceList = () => this.page.locator('.productinfo h2').first();
   readonly productTextList = () => this.page.locator('.productinfo p').first();
   readonly btnAddToCartFromList = () => this.page.locator('.overlay-content .add-to-cart').first();
-  readonly btnViewProductDetailsNth = (index = 0) => this.page.locator('.choose a').nth(index);
+  readonly btnViewProductDetailsNth = (index = 1) => this.page.locator('.choose a').nth(index - 1);
   readonly productsListWrapper = () => this.page.locator('.product-image-wrapper');
   readonly btnAddToCartNth = (index = 1) => this.page.locator(`a[data-product-id="${index}"]`).first();
   // readonly btnAddToCartFirst = () => this.page.locator('.add-to-cart').first();

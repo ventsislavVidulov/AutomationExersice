@@ -1,8 +1,6 @@
 import { BasePage } from './BasePage';
-import { PaymentDetails } from '../types/PaymentDetails';
 
 import { CartItem } from '../types/CartItem';
-
 
 export class CartPage extends BasePage {
   // ===========================================================================
@@ -20,12 +18,12 @@ export class CartPage extends BasePage {
   readonly cartItemRows = () => this.page.locator('#cart_info_table tbody tr');
   readonly cartItemNames = () => this.page.locator('.cart_description h4').allInnerTexts();
   readonly cartItemPrices = () => this.page.locator('.cart_price p').allInnerTexts();
-  readonly cartItemPrice = (itemIndex = 1) => this.page.locator('.cart_price p').nth(itemIndex);
+  readonly cartItemPrice = (itemIndex = 1) => this.page.locator('.cart_price p').nth(itemIndex - 1);
   readonly cartItemQuantities = () => this.page.locator('.cart_quantity button.disabled').allInnerTexts();
   readonly cartItemTotals = () => this.page.locator('.cart_total p').allInnerTexts();
 
-  readonly btnQuantity = (itemIndex = 0) => this.page.locator('button.disabled').nth(itemIndex);
-  readonly inputQuantity = (itemIndex = 0) => this.page.locator('input.cart_quantity_input').nth(itemIndex);
+  readonly btnQuantity = (itemIndex = 1) => this.page.locator('button.disabled').nth(itemIndex - 1);
+  readonly inputQuantity = (itemIndex = 1) => this.page.locator('input.cart_quantity_input').nth(itemIndex - 1);
   readonly cartTotalPrice = () => this.page.locator('#cart_info_table .cart_total_price');
   // readonly cartItemPrices = () => this.page.locator('#cart_info_table .cart_price');
   // readonly cartItemTotalPrices = () => this.page.locator('#cart_info td.cart_total');
