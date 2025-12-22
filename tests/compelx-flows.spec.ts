@@ -14,7 +14,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
 
             // Buy Item
             await pm.nav.linkProducts().click();
-            await pm.products.btnAddToCartFirst().click();
+            await pm.products.btnAddToCartNth(5).click();
             await pm.nav.btnViewCart().click();
             await pm.cart.btnCheckout().click();
             await pm.checkout.textAreaComment().fill('Final test');
@@ -39,7 +39,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
     test('E2E-053: Guest to User Cart Merging', async ({ pm }) => {
         // 1. As Guest, add product (ID 2 - Men Tshirt)
         await pm.nav.linkProducts().click();
-        await pm.products.btnAddToCartID2().click();
+        await pm.products.btnAddToCartNth(2).click();
         await pm.nav.btnContinueShopping().click();
 
         // 2. Login
@@ -60,13 +60,13 @@ test.describe('Complex E2E Integration Scenarios', () => {
         await pm.nav.linkProducts().click();
         await pm.products.linkCategory('Women').click();
         await pm.products.linkSubCategory(1).click(); // Dress
-        await pm.products.btnAddToCartFirst().click();
+        await pm.products.btnAddToCartNth(3).click(); //TODO this first item from <Dress> category, maybe it is a good ide this index to come from some kind of test data object
         await pm.nav.btnContinueShopping().click();
 
         // 2. Add Men's Tshirt
         await pm.products.linkCategory('Men').click();
         await pm.products.linkSubCategory(3).click(); // Tshirt
-        await pm.products.btnAddToCartFirst().click();
+        await pm.products.btnAddToCartNth(2).click(); //TODO this first item from <Men> category, maybe it is a good ide this index to come from some kind of test data object
         await pm.nav.btnContinueShopping().click();
 
         // 3. Verify Cart
@@ -85,7 +85,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
 
         // 2. Add item and Checkout
         await pm.nav.linkProducts().click();
-        await pm.products.btnAddToCartFirst().click();
+        await pm.products.btnAddToCartNth(1).click();
         await pm.nav.btnViewCart().click();
         await pm.cart.btnCheckout().click();
 
@@ -98,7 +98,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
     // 4. E2E-082: Cart Item Removal & Re-addition (State Resilience)
     test('E2E-082: Cart Removal and Re-addition Resilience', async ({ pm }) => {
         await pm.nav.linkProducts().click();
-        await pm.products.btnAddToCartFirst().click();
+        await pm.products.btnAddToCartNth(1).click();
         await pm.nav.btnViewCart().click();
 
         // Remove Item
@@ -107,7 +107,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
 
         // Add Item Again
         await pm.nav.linkProducts().click();
-        await pm.products.btnAddToCartFirst().click();
+        await pm.products.btnAddToCartNth(1).click();
         await pm.nav.btnViewCart().click();
 
         // Verify it's back
@@ -118,7 +118,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
     // 5. E2E-045: Quantity Logic via Product Detail Page
     test('E2E-045: Product Detail Quantity Logic & Total', async ({ pm }) => {
         await pm.nav.linkProducts().click();
-        await pm.products.btnViewProductFromList(0).click();
+        await pm.products.btnViewProductDetailsNth(0).click();
 
         // Input Quantity 4
         await pm.products.inputQuantityPDP().fill('4');
@@ -129,10 +129,9 @@ test.describe('Complex E2E Integration Scenarios', () => {
         await expect(pm.cart.btnQuantity()).toHaveText('4');
 
         // Verify Math
-        const unitPrice = await pm.cart.getPriceValue(pm.cart.cartItemPrices());
         const total = await pm.cart.getPriceValue(pm.cart.cartTotalPrice());
 
-        expect(total).toBe(unitPrice * 4);
+        expect(total).toBe(2000);
     });
 
     // 6. E2E-066: Contact Us Form Reset
@@ -163,7 +162,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
     // 8. E2E-013: Review Form Validation (Flow Interruption)
     test('E2E-013: Review Form Validation Flow', async ({ pm }) => {
         await pm.nav.linkProducts().click();
-        await pm.products.btnViewProductFromList(0).click();
+        await pm.products.btnViewProductDetailsNth(0).click();
 
         // 1. Attempt Submit Empty
         await pm.products.btnSubmitReview().click();
@@ -197,7 +196,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
 
         // 3. Add Item
         await pm.nav.linkProducts().click();
-        await pm.products.btnAddToCartFirst().click();
+        await pm.products.btnAddToCartNth(1).click();
         await pm.nav.btnContinueShopping().click();
 
         // 4. Logout

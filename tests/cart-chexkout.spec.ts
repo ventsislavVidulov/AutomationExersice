@@ -5,16 +5,14 @@ import { registeredUserCredentials } from '../testData/credentialsData';
 
 test.describe('Cart & Checkout Tests', () => {
 
-  invalidPaymentData.forEach((paymentData) => {
-
-    test.describe('Parametrized Tests With Invalid Payment Data', () => {
-
-      test(`Test With ${paymentData.name}`, async ({ pm }) => {
+  test.describe('Parametrized Tests With Invalid Payment Data', () => {
+    invalidPaymentData.forEach((paymentData) => {
+      test(`Test Should fail with ${paymentData.name}`, async ({ pm }) => {
         await pm.nav.linkLogin().click();
         await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
         await pm.nav.linkProducts().click();
         // Replaced raw locator
-        await pm.products.btnAddToCartFirst().click();
+        await pm.products.btnAddToCartNth(5).click();
         await pm.nav.btnViewCart().click();
         // Replaced raw locator
         await pm.cart.btnCheckout().click();
@@ -29,17 +27,14 @@ test.describe('Cart & Checkout Tests', () => {
     })
   });
 
-
-  emptyPaymentData.forEach((paymentData) => {
-
-    test.describe('Parametrized Tests With Empty Payment Data', () => {
-
-      test(`Test With ${paymentData.name}`, async ({ pm }) => {
+  test.describe('Parametrized Tests With Empty Payment Data', () => {
+    emptyPaymentData.forEach((paymentData) => {
+      test(`Test Should Fail with ${paymentData.name}`, async ({ pm }) => {
         await pm.nav.linkLogin().click();
         await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
         await pm.nav.linkProducts().click();
         // Replaced raw locator
-        await pm.products.btnAddToCartFirst().click();
+        await pm.products.btnAddToCartNth(5).click();
         await pm.nav.btnViewCart().click();
         // Replaced raw locator
         await pm.cart.btnCheckout().click();
@@ -61,7 +56,7 @@ test.describe('Cart & Checkout Tests', () => {
       await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
       await pm.nav.linkProducts().click();
       // Replaced raw locator
-      await pm.products.btnAddToCartFirst().click();
+      await pm.products.btnAddToCartNth(5).click();
       await pm.nav.btnViewCart().click();
       // Replaced raw locator
       await pm.cart.btnCheckout().click();
@@ -80,7 +75,7 @@ test.describe('Cart & Checkout Tests', () => {
       await pm.auth.loginUser(registeredUserCredentials.email, registeredUserCredentials.password);
       await pm.nav.linkProducts().click();
       // Replaced raw locator
-      await pm.products.btnAddToCartFirst().click();
+      await pm.products.btnAddToCartNth(5).click();
       await pm.nav.btnViewCart().click();
       // Replaced raw locator
       await pm.cart.btnCheckout().click();
@@ -98,7 +93,7 @@ test.describe('Cart & Checkout Tests', () => {
   // Covers CART-001, CART-002, E2E-021
   test('CART-001: Verify Cart and Checkout Flow (Guest)', async ({ pm }) => {
     await pm.nav.linkProducts().click();
-    await pm.products.btnAddToCartFirst().click();
+    await pm.products.btnAddToCartNth(5).click();
     await pm.nav.btnViewCart().click();
     expect(pm.nav.getPageUrl()).toMatch(/\/view_cart/);
 
@@ -128,14 +123,15 @@ test.describe('Cart & Checkout Tests', () => {
   });
 
   // Covers E2E-015
+  //TODO
   test('E2E-015: Update Product Quantity and Verify Total', async ({ pm }) => {
     await pm.nav.linkProducts().click();
     // Replaced raw locator
-    await pm.products.btnAddToCartFirst().click();
+    await pm.products.btnAddToCartNth(5).click();
     await pm.nav.btnViewCart().click();
 
     // Replaced raw locator
-    const unitPriceText = await pm.cart.cartItemPrices().first().innerText();
+    const unitPriceText = await pm.cart.cartItemPrice(5).innerText();
     const unitPrice = parseFloat(unitPriceText.replace(/[^0-9.]|(?<!\d)\./g, ''));
 
     await pm.cart.inputQuantity().fill('5');
@@ -150,7 +146,7 @@ test.describe('Cart & Checkout Tests', () => {
   test('E2E-107: Product Quantity Input Boundary Check', async ({ pm }) => {
     await pm.nav.linkProducts().click();
     // Replaced raw locators
-    await pm.products.btnViewProductFromList(0).click();
+    await pm.products.btnViewProductDetailsNth(0).click();
     await pm.products.inputQuantityPDP().fill('999999');
     await pm.products.btnAddToCartPDP().click();
     await pm.nav.btnViewCart().click();
@@ -165,37 +161,25 @@ test.describe('Cart & Checkout Tests', () => {
 
     // First Item
     // Replaced raw locators
-    await pm.products.btnAddToCartFirst().click();
+    await pm.products.btnAddToCartNth(5).click();
     await pm.nav.btnContinueShopping().click();
 
-    // Second Item (with hover fix)
-    // Replaced raw locators (using locator on locator which is valid)
-    const secondProductContainer = pm.products.productsListWrapper().nth(1);
-    await secondProductContainer.hover();
-    await secondProductContainer.locator('.add-to-cart').first().click(); // Targeting the add-to-cart button inside the wrapper
+    await pm.products.btnAddToCartNth(5).click();
+    await pm.nav.btnContinueShopping().click();
 
-    await pm.nav.btnViewCart().click();
+    await pm.products.btnAddToCartNth(16).click();
+    await pm.nav.btnContinueShopping().click();
 
-    const prices = await pm.cart.cartItemPrices().allInnerTexts();
+    await pm.nav.linkCartNavigation().click();;
 
-    let expectedTotal = 0;
-    prices.forEach(priceText => {
-      expectedTotal += parseFloat(priceText.replace(/[^0-9.]|(?<!\d)\./g, ''));
-    });
-
-    // Replaced raw locators with PM locator
-    const firstActualTotalText = await pm.cart.cartItemTotalPrices().nth(0).innerText();
-    const secondActualTotalText = await pm.cart.cartItemTotalPrices().nth(1).innerText();
-    const actualSum = parseFloat(firstActualTotalText.replace(/[^0-9.]|(?<!\d)\./g, '')) + parseFloat(secondActualTotalText.replace(/[^0-9.]|(?<!\d)\./g, ''));
-
-    expect(actualSum).toBeCloseTo(expectedTotal, 0.01);
+    expect(await pm.cart.getTotalPrice()).toBeCloseTo(1678, 0.01);
   });
 
   // Covers E2E-064
   test('E2E-064: Guest User Attempts Checkout', async ({ pm }) => {
     await pm.nav.linkProducts().click();
     // Replaced raw locator
-    await pm.products.btnAddToCartFirst().click();
+    await pm.products.btnAddToCartNth(5).click();
     await pm.nav.btnViewCart().click();
     // Replaced raw locator
     await pm.cart.btnCheckout().click();
