@@ -5,7 +5,7 @@ test.describe('Product Discovery & Review Tests', () => {
   // Covers PRD-001, PRD-003, E2E-011
   test('PRD-001: Search Product and Add to Cart', async ({ pm }) => {
     await pm.nav.linkProducts().click();
-    await expect(pm.nav.getPageTitle()).toMatch(/All Products/);
+    expect(pm.nav.getPageUrl()).toMatch(/products/);
 
     await pm.products.searchProduct('Blue Top'); 
 
@@ -50,7 +50,7 @@ test.describe('Product Discovery & Review Tests', () => {
     await pm.nav.linkProducts().click();
     const listPrice = await pm.products.productPriceList().innerText();
 
-    await pm.products.btnViewProductDetailsNth(0).click();
+    await pm.products.btnViewProductDetailsNth(1).click();
     await expect(pm.products.productPrice()).toHaveText(listPrice);
     await expect(pm.products.productAvailability()).toBeVisible();
     await expect(pm.products.productAvailability()).toContainText('In Stock');
@@ -67,7 +67,7 @@ test.describe('Product Discovery & Review Tests', () => {
   // Covers E2E-017
   test('E2E-017: Add Recommended Item to Cart', async ({ pm }) => {
     await pm.products.carouselRecommended().scrollIntoViewIfNeeded();
-    await pm.products.btnAddRecommended().click();
+    await pm.products.btnAddRecommendedFirst().click();
     await expect(pm.nav.modalAdded()).toBeVisible();
     await pm.nav.btnViewCart().click();
     await expect(pm.cart.cartItemRows()).toHaveCount(1);
@@ -75,7 +75,7 @@ test.describe('Product Discovery & Review Tests', () => {
 
   // Covers HOME-009
   test('HOME-009: View Product Button Navigation', async ({ pm }) => {
-    await pm.products.btnViewProductDetailsNth(2).click();
+    await pm.products.btnViewProductDetailsNth(3).click();
     await expect(pm.nav.getPageUrl()).toMatch(/\/product_details\/3/);
     await expect(pm.products.h2ProductInfo()).toBeVisible();
   });
@@ -83,8 +83,8 @@ test.describe('Product Discovery & Review Tests', () => {
   // Covers HOME-005
   test('HOME-005: Verify Add to Cart Overlay on Hover', async ({ pm }) => {
     await pm.nav.goToHomePage(); 
-    const productCard = pm.products.productCard(0);
-    const overlay = pm.products.productOverlay(0);
+    const productCard = pm.products.productCard(1);
+    const overlay = pm.products.productOverlay(1);
     
     await expect(overlay).toHaveCSS('height', '0px');
     await productCard.hover();

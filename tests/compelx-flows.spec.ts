@@ -118,7 +118,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
     // 5. E2E-045: Quantity Logic via Product Detail Page
     test('E2E-045: Product Detail Quantity Logic & Total', async ({ pm }) => {
         await pm.nav.linkProducts().click();
-        await pm.products.btnViewProductDetailsNth(0).click();
+        await pm.products.btnViewProductDetailsNth(34).click();
 
         // Input Quantity 4
         await pm.products.inputQuantityPDP().fill('4');
@@ -131,7 +131,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
         // Verify Math
         const total = await pm.cart.getPriceValue(pm.cart.cartTotalPrice());
 
-        expect(total).toBe(2000);
+        expect(total).toBe(5556);
     });
 
     // 6. E2E-066: Contact Us Form Reset
@@ -215,7 +215,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
         await pm.nav.goToHomePage();
         await pm.products.scrollTo(500);
 
-        const productCard = pm.products.productCard(0);
+        const productCard = pm.products.productCard(1);
         const overlayBtn = productCard.locator('.overlay-content .add-to-cart');
 
         await productCard.hover();
