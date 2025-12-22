@@ -6,6 +6,7 @@ import { CartPage } from './CartPage';
 import { SupportPage } from './SupportPage';
 import { CheckOutPage } from './CheckOutPage';
 import { PaymentPage } from './PaymentPage';
+import { ProductDetailsPage } from './ProductDetailsPage';
 
 export class PageManager {
   readonly page: Page;
@@ -17,6 +18,8 @@ export class PageManager {
   readonly support: SupportPage;
   readonly checkout: CheckOutPage;
   readonly payment: PaymentPage;
+  readonly productDetails: ProductDetailsPage;
+
 
   constructor(page: Page) {
     this.page = page;
@@ -28,5 +31,6 @@ export class PageManager {
     this.support = new SupportPage(page);
     this.checkout = new CheckOutPage(page);
     this.payment = new PaymentPage(page);
+    this.productDetails = new ProductDetailsPage(page);
   }
 }

@@ -40,9 +40,9 @@ test.describe('Product Discovery & Review Tests', () => {
   test('PD-005: Submit Product Review', async ({ pm }) => {
     await pm.nav.linkProducts().click();
     await pm.products.btnViewProductDetailsNth(0).click();
-    await pm.products.submitReview('QA Tester', 'test@test.com', 'This is a high quality product.');
-    await expect(pm.products.alertReviewSuccess()).toBeVisible();
-    await expect(pm.products.alertReviewSuccess()).toContainText('Thank you for your review');
+    await pm.productDetails.submitReview('QA Tester', 'test@test.com', 'This is a high quality product.');
+    await expect(pm.productDetails.alertReviewSuccess()).toBeVisible();
+    await expect(pm.productDetails.alertReviewSuccess()).toContainText('Thank you for your review');
   });
 
   // Covers PD-001
@@ -51,9 +51,9 @@ test.describe('Product Discovery & Review Tests', () => {
     const listPrice = await pm.products.productPriceList().innerText();
 
     await pm.products.btnViewProductDetailsNth(1).click();
-    await expect(pm.products.productPrice()).toHaveText(listPrice);
-    await expect(pm.products.productAvailability()).toBeVisible();
-    await expect(pm.products.productAvailability()).toContainText('In Stock');
+    await expect(pm.productDetails.productPrice()).toHaveText(listPrice);
+    await expect(pm.productDetails.productAvailability()).toBeVisible();
+    await expect(pm.productDetails.productAvailability()).toContainText('In Stock');
   });
 
   // Covers PRD-002

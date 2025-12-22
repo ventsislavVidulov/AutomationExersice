@@ -121,8 +121,8 @@ test.describe('Complex E2E Integration Scenarios', () => {
         await pm.products.btnViewProductDetailsNth(34).click();
 
         // Input Quantity 4
-        await pm.products.inputQuantityPDP().fill('4');
-        await pm.products.btnAddToCartPDP().click();
+        await pm.productDetails.inputQuantity().fill('4');
+        await pm.productDetails.btnAddToCart().click();
         await pm.nav.btnViewCart().click();
 
         // Verify Quantity
@@ -165,19 +165,19 @@ test.describe('Complex E2E Integration Scenarios', () => {
         await pm.products.btnViewProductDetailsNth(0).click();
 
         // 1. Attempt Submit Empty
-        await pm.products.btnSubmitReview().click();
-        await expect(pm.products.alertReviewSuccess()).not.toBeVisible();
+        await pm.productDetails.btnSubmitReview().click();
+        await expect(pm.productDetails.alertReviewSuccess()).not.toBeVisible();
 
         // 2. Fill Partial
-        await pm.products.inputReviewName().fill('Tester');
-        await pm.products.inputReviewText().fill('Great product');
-        await pm.products.btnSubmitReview().click();
-        await expect(pm.products.alertReviewSuccess()).not.toBeVisible();
+        await pm.productDetails.inputReviewName().fill('Tester');
+        await pm.productDetails.inputReviewText().fill('Great product');
+        await pm.productDetails.btnSubmitReview().click();
+        await expect(pm.productDetails.alertReviewSuccess()).not.toBeVisible();
 
         // 3. Fill All
-        await pm.products.inputReviewEmail().fill('test@valid.com');
-        await pm.products.btnSubmitReview().click();
-        await expect(pm.products.alertReviewSuccess()).toBeVisible();
+        await pm.productDetails.inputReviewEmail().fill('test@valid.com');
+        await pm.productDetails.btnSubmitReview().click();
+        await expect(pm.productDetails.alertReviewSuccess()).toBeVisible();
     });
 
     // 9. E2E-002: Cart Persistence After Logout/Login
