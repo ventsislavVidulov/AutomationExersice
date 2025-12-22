@@ -28,11 +28,11 @@ export class ProductPage extends BasePage {
   readonly productPriceList = () => this.page.locator('.productinfo h2').first();
   readonly productTextList = () => this.page.locator('.productinfo p').first();
   readonly btnAddToCartFromList = () => this.page.locator('.overlay-content .add-to-cart').first();
-  readonly btnViewProductFromList = (index = 0) => this.page.locator('.choose a').nth(index);
+  readonly btnViewProductDetailsNth = (index = 0) => this.page.locator('.choose a').nth(index);
   readonly productsListWrapper = () => this.page.locator('.product-image-wrapper');
   readonly btnAddToCartNth = (index = 1) => this.page.locator(`a[data-product-id="${index}"]`).first();
-  readonly btnAddToCartFirst = () => this.page.locator('.add-to-cart').first();
-  readonly btnAddToCartID2 = () => this.page.locator('a[data-product-id="2"]').first();
+  // readonly btnAddToCartFirst = () => this.page.locator('.add-to-cart').first();
+  // readonly btnAddToCartID2 = () => this.page.locator('a[data-product-id="2"]').first();
 
   // ===========================================================================
   // RECOMMENDED ITEMS
