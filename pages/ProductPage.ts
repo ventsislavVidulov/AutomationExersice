@@ -38,7 +38,7 @@ export class ProductPage extends BasePage {
   // RECOMMENDED ITEMS
   // ===========================================================================
   readonly carouselRecommended = () => this.page.locator('#recommended-item-carousel');
-  readonly btnAddRecommended = () => this.page.locator('.recommended_items .active .add-to-cart').first();
+  readonly btnAddRecommendedFirst = () => this.page.locator('.recommended_items .active .add-to-cart').first();
 
   // ===========================================================================
   // PRODUCT DETAILS PAGE (PDP)
