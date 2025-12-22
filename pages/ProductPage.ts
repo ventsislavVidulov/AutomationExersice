@@ -31,8 +31,6 @@ export class ProductPage extends BasePage {
   readonly btnViewProductDetailsNth = (index = 1) => this.page.locator('.choose a').nth(index - 1);
   readonly productsListWrapper = () => this.page.locator('.product-image-wrapper');
   readonly btnAddToCartNth = (index = 1) => this.page.locator(`a[data-product-id="${index}"]`).first();
-  // readonly btnAddToCartFirst = () => this.page.locator('.add-to-cart').first();
-  // readonly btnAddToCartID2 = () => this.page.locator('a[data-product-id="2"]').first();
 
   // ===========================================================================
   // RECOMMENDED ITEMS
