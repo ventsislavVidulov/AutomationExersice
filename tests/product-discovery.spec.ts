@@ -31,7 +31,7 @@ test.describe('Product Discovery & Review Tests', () => {
   // Covers PRD-010
   test('PRD-010: Filter Products by Brand (Polo)', async ({ pm }) => {
     await pm.nav.linkProducts().click();
-    await pm.products.linkBrandPolo().click();
+    await pm.products.linkBrand('Polo').click();
     await expect(pm.nav.getPageUrl()).toMatch(/\/brand_products\/Polo/);
     await expect(pm.products.h2PageTitle()).toContainText('Brand - Polo Products');
   });

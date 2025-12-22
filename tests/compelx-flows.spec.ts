@@ -232,7 +232,7 @@ test.describe('Complex E2E Integration Scenarios', () => {
         await pm.nav.linkProducts().click();
 
         // 1. Apply Filter (Polo)
-        await pm.products.linkBrandPolo().click();
+        await pm.products.linkBrand('Polo').click();
         await expect(pm.products.h2PageTitle()).toContainText('Brand - Polo Products');
 
         // 2. Perform Search ('Dress')

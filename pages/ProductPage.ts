@@ -15,7 +15,7 @@ export class ProductPage extends BasePage {
   // ===========================================================================
   readonly linkCategory = (category: string) => this.page.locator(`.panel-title a[href="#${category}"]`);
   readonly linkSubCategory = (categoryId: number) => this.page.locator(`a[href="/category_products/${categoryId}"]`);
-  readonly linkBrandPolo = () => this.page.locator('.brands-name a[href="/brand_products/Polo"]');
+  readonly linkBrand = (brand: string) => this.page.locator(`.brands-name a[href="/brand_products/${brand}"]`);
   readonly panelWomen = () => this.page.locator('#accordian a[href="#Women"]');
   readonly linkSubCategoryDress = () => this.page.locator('a[href="/category_products/1"]');
 
