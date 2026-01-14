@@ -9,7 +9,7 @@ type ParamFixture<T> = {
   params: T;
 };
 
-// 1. Your Base Fixture
+// Base Fixture
 export const test = base.extend<PMFixture>({
   pm: async ({ page }, use) => {
     const pm = new PageManager(page);
