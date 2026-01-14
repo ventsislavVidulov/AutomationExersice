@@ -1,5 +1,5 @@
 import { test, expect } from "../fixtures";
-import { registeredUserCredentials } from "../testData/credentialsData";
+import { accountDetails, addressDetails, registeredUserCredentials } from "../testData/credentialsData";
 
 
 test.describe('Authentication Tests', () => {
@@ -10,8 +10,8 @@ test.describe('Authentication Tests', () => {
   //     await expect(page).toHaveTitle(/Signup/);
   //     await expect(pm.inputPassword()).toBeVisible();
 
-  //     await pm.fillAccountDetails(password);
-  //     await pm.fillAddressDetails();
+  //     await pm.fillAccountDetails(accountDetails);
+  //     await pm.fillAddressDetails(addressDetails);
 
   //     // Updated to use PageManager locator
   //     await expect(pm.h2AccountCreated()).toBeVisible();

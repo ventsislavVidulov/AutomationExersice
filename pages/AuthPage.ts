@@ -1,4 +1,5 @@
 import { BasePage } from './BasePage';
+import { AccountDetails, AddressDetails } from '../types/Credentials';
 
 export class AuthPage extends BasePage {
   // ===========================================================================
@@ -18,6 +19,7 @@ export class AuthPage extends BasePage {
   // ACCOUNT CREATION FORM (PERSONAL INFO)
   // ===========================================================================
   readonly radioMr = () => this.page.locator('#id_gender1');
+  readonly radioMrs = () => this.page.locator('#id_gender2');
   readonly inputPassword = () => this.page.locator('[data-qa="password"]');
   readonly selectDay = () => this.page.locator('#days');
   readonly selectMonth = () => this.page.locator('#months');
@@ -61,25 +63,33 @@ export class AuthPage extends BasePage {
     await this.btnLogin().click();
   }
 
-  async fillAccountDetails(password: string) {
-    await this.radioMr().check();
+  async fillAccountDetails({gender, password, day, month, year, newsletter, option}: AccountDetails) {
+   if (gender === 'male') {
+      await this.radioMr().check();
+    } else {
+      await this.radioMrs().check();
+    }
     await this.inputPassword().fill(password);
-    await this.selectDay().selectOption('1');
-    await this.selectMonth().selectOption('1');
-    await this.selectYear().selectOption('1990');
-    await this.checkNewsletter().check();
-    await this.checkOptin().check();
+    await this.selectDay().selectOption(day);
+    await this.selectMonth().selectOption(month);
+    await this.selectYear().selectOption(year);
+    if (newsletter) {
+      await this.checkNewsletter().check();
+    }
+    if (option) {
+      await this.checkOptin().check();
+    }
   }
 
-  async fillAddressDetails() {
-    await this.inputFirstName().fill('John');
-    await this.inputLastName().fill('Doe');
-    await this.inputAddress1().fill('123 Test Street');
-    await this.selectCountry().selectOption('United States');
-    await this.inputState().fill('New York');
-    await this.inputCity().fill('New York');
-    await this.inputZip().fill('10001');
-    await this.inputMobile().fill('1234567890');
+  async fillAddressDetails({firstName, lastName, address1, country, state, city, zip, mobile}: AddressDetails) {
+    await this.inputFirstName().fill(firstName);
+    await this.inputLastName().fill(lastName);
+    await this.inputAddress1().fill(address1);
+    await this.selectCountry().selectOption(country);
+    await this.inputState().fill(state);
+    await this.inputCity().fill(city);
+    await this.inputZip().fill(zip);
+    await this.inputMobile().fill(mobile);
     await this.btnCreateAccount().click();
   }
 }
