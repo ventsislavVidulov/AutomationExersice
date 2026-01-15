@@ -147,8 +147,8 @@ test.describe('Cart & Checkout Tests', () => {
     await pm.nav.linkProducts().click();
     // Replaced raw locators
     await pm.products.btnViewProductDetailsNth(0).click();
-    await pm.products.inputQuantityPDP().fill('999999');
-    await pm.products.btnAddToCartPDP().click();
+    await pm.productDetails.inputQuantity().fill('999999');
+    await pm.productDetails.btnAddToCart().click();
     await pm.nav.btnViewCart().click();
 
     const finalQuantity = await pm.cart.inputQuantity().inputValue();
