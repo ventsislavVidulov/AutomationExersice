@@ -5,22 +5,22 @@ import { accountDetails, addressDetails, registeredUserCredentials } from "../te
 test.describe('Authentication Tests', () => {
 
   // Covers E2E-001
-  //   test('E2E-001: Full User Registration Flow', async ({ page }) => {
-  //     await pm.registerUser(randomEmail, randomEmail);
-  //     await expect(page).toHaveTitle(/Signup/);
-  //     await expect(pm.inputPassword()).toBeVisible();
+    // test('E2E-001: Full User Registration Flow', async ({ pm }) => {
+    //   await pm.auth.registerUser(randomEmail, randomEmail);
+    //   await expect(pm.nav.getPageTitle()).toBe(/Signup/);
+    //   await expect(pm.auth.inputPassword()).toBeVisible();
 
-  //     await pm.fillAccountDetails(accountDetails);
-  //     await pm.fillAddressDetails(addressDetails);
+    //   await pm.auth.fillAccountDetails(accountDetails);
+    //   await pm.auth.fillAddressDetails(addressDetails);
 
-  //     // Updated to use PageManager locator
-  //     await expect(pm.h2AccountCreated()).toBeVisible();
-  //     await pm.btnContinue().click();
+    //   // Updated to use PageManager locator
+    //   await expect(pm.auth.h2AccountCreated()).toBeVisible();
+    //   await pm.auth.btnContinue().click();
 
-  //     // Updated to use PageManager locator for dynamic text
-  //     await expect(pm.txtLoggedInUser(randomEmail)).toBeVisible();
-  //     await pm.linkLogout().click();
-  //   });
+    //   // Updated to use PageManager locator for dynamic text
+    //   await expect(pm.nav.txtLoggedInUser(randomEmail)).toBeVisible();
+    //   await pm.nav.linkLogout().click();
+    // });
 
   // Covers E2E-004
   test('E2E-004: Negative Registration (Existing Email)', async ({ pm }) => {
@@ -28,7 +28,7 @@ test.describe('Authentication Tests', () => {
     await pm.nav.linkLogin().click();
 
     // Attempt to register with the same email used in E2E-001 (or previous runs)
-    await pm.auth.registerUser('Duplicate User', 'johndoesecond@johndoe.com'); // Or use randomEmail if you want to test strict duplication of the specific user
+    await pm.auth.registerUser(registeredUserCredentials.userFullName, registeredUserCredentials.email); // Or use randomEmail if you want to test strict duplication of the specific user
 
     // Updated to use PageManager locator
     await expect(pm.auth.msgSignupError()).toContainText('Email Address already exist!');
