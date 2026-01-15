@@ -30,6 +30,8 @@ npm install
 
 ## Running Tests
 
+Note: to run the tests, you need to register at automationexercise.com, and create testData/credentialsData.ts with your credentials, using the types from types/Credentials.ts. I am aware that payment data also must not be in public repository, but no real credit card credentials are used.
+
 Run all tests:
 ```bash
 npx playwright test
@@ -47,7 +49,7 @@ npx playwright test --ui
 
 ## Test Coverage
 
-- Authentication (login, signup)
+- Authentication
 - Product discovery and search
 - Cart and checkout flows
 - Security tests
